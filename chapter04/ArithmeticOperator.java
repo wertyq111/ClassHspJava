@@ -15,9 +15,13 @@ public class ArithmeticOperator
 
 		//% 取模,取余
 		//java中 % 的公式为: a % b = a - a / b * b;
+		//a % b 当 a 是小数时,公式为: a % b = a - (int)a / b * b;
+		//注意: 有小数运算时,得到的结果是近似值
 		System.out.println(10 % 3); //1
 		System.out.println(-10 % 3); //-1
 		System.out.println(10 % -3); //1
+		System.out.println(-10.5 % 3); //-1.5
+		System.out.println(-10.4 % 3); //-1.4000000000000004
 
 		//++ 使用
 		//++i 先自增再赋值
