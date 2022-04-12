@@ -84,7 +84,6 @@ public class BitOperatorExercise
          *      3. 运算后结果: -1
          */
         System.out.println("f = " + f);
-        System.out.println(Integer.toBinaryString(f));
 
         /**
          * 解读:
