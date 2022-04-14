@@ -15,37 +15,37 @@ public class MoultiplyForExercise
 		 * 问题:
 		 * 	1. 各个班的平均分
 		 * 	2. 所有班级的平均分
-		 *  3. 及格人数
+		 *	3. 及格人数
 		 * [学生成绩从键盘输入]
 		 * 
 		 */
-		// int classNum = 3;
-		// int studentNum = 5;
-		// double classSum = 0.0;
-		// int passNum = 0;
-		// double passScore = 60.0;
-		// int i = 1;
-		// double currentScore = 0.0;
+		int classNum = 3;
+		int studentNum = 5;
+		double classSum = 0.0;
+		int passNum = 0;
+		double passScore = 60.0;
+		int i = 1;
+		double currentScore = 0.0;
 
 
-		// while(i <= classNum) {
-		// 	double currClassSum = 0.0;
-		// 	for (int j = 1; j <= studentNum; j++) {
-		// 		System.out.println("请输入" + i + "班" + "中同学" + j + "的成绩");
-		// 		currentScore = myScanner.nextDouble();
-		// 		currClassSum += currentScore;
-		// 		//累积及格人数
-		// 		if(currentScore >= passScore) {
-		// 			passNum++;
-		// 		}
-		// 	}
-		// 	//将当前班级的总分累积到所有班级的总分
-		// 	classSum += currClassSum;
-		// 	System.out.println(i + "班的平均分是: " + (double)(currClassSum / studentNum));
-		// 	i++;
-		// }
-		// System.out.println("所有班的平均分是: " + (double)(classSum / (studentNum * classNum)));
-		// System.out.println("所有班及格人数: " + passNum);
+		while(i <= classNum) {
+			double currClassSum = 0.0;
+			for (int j = 1; j <= studentNum; j++) {
+				System.out.println("请输入" + i + "班" + "中同学" + j + "的成绩");
+				currentScore = myScanner.nextDouble();
+				currClassSum += currentScore;
+				//累积及格人数
+				if(currentScore >= passScore) {
+					passNum++;
+				}
+			}
+			//将当前班级的总分累积到所有班级的总分
+			classSum += currClassSum;
+			System.out.println(i + "班的平均分是: " + (double)(currClassSum / studentNum));
+			i++;
+		}
+		System.out.println("所有班的平均分是: " + (double)(classSum / (studentNum * classNum)));
+		System.out.println("所有班及格人数: " + passNum);
 
 
 		/**
@@ -60,21 +60,21 @@ public class MoultiplyForExercise
 		 * 1 x 8 = 9    2 x 8 = 16    3 x 8 = 24    4 x 8 = 32    5 x 8 = 40   6 x 8 = 48    7 x 8 = 56    8 x 8 = 64
 		 * 1 x 9 = 9    2 x 9 = 18    3 x 9 = 27    4 x 9 = 36    5 x 9 = 45   6 x 9 = 54    7 x 9 = 63    8 x 9 = 72    9 x 9 = 81
 		 */
-		// System.out.println("九九乘法表");
-		// int end = 9;
-		// while(i < end) {
-		// 	for(int j = 1;j <= i; j++) {
-		// 		System.out.print(j + " x " + i + " = " + (i * j) + "\t");
-		// 	}
-		// 	System.out.println("");
-		// 	i++;
-		// }
-		// for(int i = 1;i < end;i++) {
-		// 	for(int j = 1;j <= i; j++) {
-		// 		System.out.print(j + " x " + i + " = " + (i * j) + "\t");
-		// 	}
-		// 	System.out.println("");
-		// }
+		System.out.println("九九乘法表");
+		int end = 9;
+		while(i < end) {
+			for(int j = 1;j <= i; j++) {
+				System.out.print(j + " x " + i + " = " + (i * j) + "\t");
+			}
+			System.out.println("");
+			i++;
+		}
+		for(int i = 1;i < end;i++) {
+			for(int j = 1;j <= i; j++) {
+				System.out.print(j + " x " + i + " = " + (i * j) + "\t");
+			}
+			System.out.println("");
+		}
 
 		/**
 		 * 打印空心金字塔
