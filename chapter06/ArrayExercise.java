@@ -104,3 +104,90 @@ public class ArrayExercise
 		}
 	}
 }
+
+
+/**
+ * 数组扩容
+ * 
+ */
+class ArrayAddExercise
+{
+	public static void main(String[] args)
+	{
+		/**
+		 * 要求
+		 * 	实现动态的数组添加元素效果,实现对数组的扩容
+		 * 	1. 原视数组使用静态分配 int[] arr = {1, 2}
+		 * 	2. 增加的元素,直接放到数组的最后 arr = {1, 2, 3, 4}
+		 * 	3. 用户可以通过如下方式来决定是否继续添加. "继续添加,是否继续? y/n"
+		 * 
+		 */
+		int[] arr = {1, 2};
+		Scanner myScanner = new Scanner(System.in);
+		for(;;){
+			int[] arrTemp = new int[arr.length + 1];
+			for(int i = 0; i < arr.length; i++) {
+				arrTemp[i] = arr[i];
+			}
+			System.out.println("输入添加的数");
+			int num = myScanner.nextInt();
+			arrTemp[arr.length] = num;
+			arr = arrTemp;
+			System.out.println("继续添加,是否继续? y/n");
+			char c = myScanner.next().charAt(0);
+			if(c == 'n') {
+				break;
+			}
+		}
+
+
+		System.out.println("下面输出arr最终结果");
+		for(int j = 0; j < arr.length; j++) {
+			System.out.print(arr[j] + " ");
+		}
+
+	}
+}
+
+
+/**
+ * 数组缩减
+ * 
+ */
+class ArrayReduceExercise
+{
+	public static void main(String[] args)
+	{
+		int[] arr = {1, 2, 3, 4, 5};
+
+		Scanner myScanner = new Scanner(System.in);
+
+		for(;;){
+			int[] arrTemp = new int[arr.length - 1];
+			for(int i = 0; i < arr.length; i++) {
+				if(i < arrTemp.length) {
+					arrTemp[i] = arr[i];
+				} else {
+					System.out.println("数组缩第" + (i + 1) + "位,值为:" + arr[i]);
+				}
+			}
+			arr = arrTemp;
+			if(arr.length == 1) {
+				System.out.println("不能再缩减");
+				break;
+			} else {
+				System.out.println("继续缩减,是否继续? y/n");
+				char c = myScanner.next().charAt(0);
+				if(c == 'n') {
+					break;
+				}
+			}
+		}
+
+
+		System.out.println("下面输出arr最终结果");
+		for(int j = 0; j < arr.length; j++) {
+			System.out.print(arr[j] + " ");
+		}
+	}
+}
