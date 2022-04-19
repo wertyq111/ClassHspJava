@@ -60,5 +60,47 @@ public class ArrayExercise
 
 		System.out.println("数组和为: " + hensSum);
 		System.out.println("数组平均值为: " + (hensSum / hens.length));
+
+		/**
+		 * 数组拷贝
+		 * 将 int[] arr1 = {10, 20, 30}; 拷贝到 arr2 空间里
+		 * 要求数据空间独立
+		 */
+		int[] arr1 = {10, 20, 30};
+		int[] arr2 = new int[arr1.length];
+
+		//遍历arr1 将值拷贝到arr2 中
+		for(int i = 0; i < arr1.length; i++) {
+			arr2[i] = arr1[i];
+		}
+
+		System.out.println("========arr1元素=========");
+		for(int i = 0; i < arr1.length; i++) {
+			System.out.print(arr1[i] + " ");
+		}
+
+		System.out.println("\n========arr2元素=========");
+		for(int i = 0; i < arr2.length; i++) {
+			System.out.print(arr2[i] + " ");
+		}
+
+		System.out.println("");
+
+		/**
+		 * 数组翻转
+		 * 
+		 */
+		int[] arr = {11, 22, 33, 44, 55, 66};
+
+		for(int i = 0, j = (arr.length - 1); i < arr.length / 2; i++, j--) {
+			int temp = arr[i];
+			arr[i] = arr[j];
+			arr[j] = temp;
+		}
+
+		System.out.println("------arr元素------");
+		for(int i = 0; i < arr.length; i++) {
+			System.out.print(arr[i] + " ");
+		}
 	}
 }
