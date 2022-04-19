@@ -31,9 +31,10 @@ public class BubbleSorting
          */
         int[] arr = {24, 69, 80, 57, 13};
         int temp = 0;
+        int loopNum = arr.length - 1;
 
-        for(int num = 0; num < arr.length; num++) {
-            for(int i = 0; i < (arr.length - 1 - num); i++) {
+        for(int num = 0; num < loopNum; num++) {
+            for(int i = 0; i < (loopNum - num); i++) {
                 int nextIndex = i + 1;
                 if(arr[i] > arr[nextIndex]) {
                     temp = arr[nextIndex];
@@ -41,10 +42,11 @@ public class BubbleSorting
                     arr[i] = temp;
                 }
             } 
-        }      
-        for(int i = 0; i < arr.length; i++) {
-            System.out.print(arr[i] + " ");
+            System.out.println("µÚ" + (num + 1) + "ÂÖÅÅÐò½á¹û");
+            for(int i = 0; i < arr.length; i++) {
+                System.out.print(arr[i] + " ");
+            }
+            System.out.println("");
         }
-
 	}
 }
