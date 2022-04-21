@@ -22,6 +22,19 @@ public class MethodDetail
 
         int sum = p.getSum(num1, num2);
         System.out.println("两个输入的数求和结果: " + sum);
+
+        /**
+         * 遍历一个数组, 输出数组的各个元素
+         * int[][] map = {{0, 0, 1}, {1, 1, 1}, {1, 1, 3}};
+         * 
+         */
+        int[][] map = {{0, 0, 1}, {1, 1, 1}, {1, 1, 3}};
+        MyTools tools = new MyTools();
+        tools.printArr(map);
+
+        System.out.println("输入一个整数");
+        num = myScanner.nextInt();
+        tools.getNum(num);
 	}
 }
 
@@ -69,5 +82,30 @@ class Person
     public int getSum(int num1, int num2)
     {
         return num1 + num2;
+    }
+}
+
+class MyTools
+{
+    public void printArr(int[][] map)
+    {
+        System.out.println("------循环数组开始------");
+        for(int i = 0; i < map.length; i++) {
+            for(int j = 0; j < map[i].length; j++) {
+                System.out.print(map[i][j] + " ");
+            }
+        }
+        System.out.println("\n------循环数组结束------");
+    }
+
+    public void printNum(int n)
+    {
+        System.out.println("输入的整数是: " + n);
+    }
+
+    public void getNum(int n)
+    {
+        printNum(n);
+        System.out.println("执行完成");
     }
 }
