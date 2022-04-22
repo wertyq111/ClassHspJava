@@ -20,16 +20,30 @@ public class EightQueens
 		 */
 		QueenTool tool = new QueenTool();
 		int[][] queens = new int[8][8];
-		for(int i = 0; i < queens.length; i++) {
-			int[] queen = new int[8];
-			queen[0] = i;
-			for(int j = 1; j < queens.length; j++) {
-				queen[j] = 0;
-			}
-			queens[i][j] = tool.arrangement()
-		}
+		// for(int i = 0; i < queens.length; i++) {
+		// 	int[] queen = new int[8];
+		// 	queen[0] = i;
+		// 	for(int j = 1; j < queens.length; j++) {
+		// 		queen[j] = 0;
+		// 	}
+		// 	//queens[i] = tool.arrangement(queen)
+		// }
 
-		queens.arrangement(queen, 0);
+
+		int[] queen = {0, 0, 0, 0, 0, 0, 0, 0};
+		System.out.println("===初始数组===");
+		for(int i = 0; i < queen.length; i++) {
+			System.out.print(queen[i] + " ");
+		}
+		System.out.println("");
+
+		queen = tool.arrangement(queen, 0);
+
+		System.out.println("===排列数组===");
+		for(int i = 0; i < queen.length; i++) {
+			System.out.print(queen[i] + " ");
+		}
+		System.out.println("");
 	}
 }
 
@@ -41,16 +55,16 @@ class QueenTool
 	 * {0, 3, 2, 1, 4, 5, 6, 7}
 	 * 
 	 */
-	public int[] arrangement(int[] queen)
+	public int[] arrangement(int[] queen, int x)
 	{
-		boolean isQueen = false;
-		for(int i = 0; i < queens.length; i++) {
-			for(int j = 0; j < queens.length; j++) {
-				if(i != j && queen[j] == queen[i]) {
-					queen[j]++;
-					queen = arrangement(queen)
-				}
+		if(queen.length - x > 1) {
+			for(int i = x; i < queen.length - x; i++) {
+				queen[x] = i;
+				queen = arrangement(queen, x + 1);
 			}
 		}
+
+		return queen;
+
 	}
 }
