@@ -23,7 +23,8 @@ public class Homework05
 class Circle
 {
     double radius;
-    double pai = 3.1415926;
+    //double pai = 3.1415926;
+    double pai = Math.PI;
 
     public Circle(double radius)
     {

@@ -16,6 +16,9 @@ public class Homework12
         Employee employee1 = new Employee("jack", '男', 28, "员工", 12345.6);
         Employee employee2 = new Employee("lucky", '女', 18);
         Employee employee3 = new Employee("学生", 2500);
+        System.out.println("姓名: " + employee1.name + " 性别: " + employee1.gender + " 年龄: " + employee1.age + " 职位: " + employee1.position + " 薪水: " + employee1.salary);
+        System.out.println("姓名: " + employee2.name + " 性别: " + employee2.gender + " 年龄: " + employee2.age);
+        System.out.println("职位: " + employee3.position + " 薪水: " + employee3.salary);
 	}
 }
 
@@ -27,15 +30,6 @@ class Employee
     String position;
     double salary;
 
-    public Employee(String name, char gender, int age, String position, double salary)
-    {
-        this.name = name;
-        this.gender = gender;
-        this.age = age;
-        this.position = position;
-        this.salary = salary;
-    }
-
     public Employee(String name, char gender, int age)
     {
         this.name = name;
@@ -45,6 +39,13 @@ class Employee
 
     public Employee(String position, double salary)
     {
+        this.position = position;
+        this.salary = salary;
+    }
+
+    public Employee(String name, char gender, int age, String position, double salary)
+    {
+        this(name, gender, age); //构造器复用
         this.position = position;
         this.salary = salary;
     }

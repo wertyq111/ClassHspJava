@@ -24,7 +24,7 @@ public class Homework13
 class Circle
 {
     double radius;
-    double pai = 3.141592653589793;
+    double pai = Math.PI;
 
     public Circle(double radius)
     {
@@ -43,9 +43,14 @@ class Circle
         System.out.println("Ô²Ãæ»ýÎª: " + (pai * radius * radius));
     }
 
-    public double findArea(double radius)
+    public double findArea()
     {
         return pai * radius * radius;
+    }
+
+    public void setRadius(double radius)
+    {
+        this.radius = radius;
     }
 }
 
@@ -56,7 +61,8 @@ class PassObject
         System.out.println("Radius\tArea");
         for(int i = 1; i <= times; i++) {
             double radius = (double)i;
-            System.out.println(radius + "\t" + c.findArea(radius));
+            c.setRadius(i);
+            System.out.println(radius + "\t" + c.findArea());
         }
     }
 }

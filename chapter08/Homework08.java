@@ -12,6 +12,9 @@
             System.out.println("count1=" + count++);
         }
         public static void main(String args[]) {
+            //老韩解读
+            //1. new Test() 是匿名对象, 匿名对象使用后就不能使用
+            //2. new Test().count1() 创建好匿名对象后就调用count1()
             new Test().count1();
             Test t1=new Test();
             t1.count2();

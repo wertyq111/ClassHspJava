@@ -10,9 +10,7 @@ public class Homework07
 	public static void main(String[] args)
 	{
         Dog d = new Dog("boom", "white", 2);
-        System.out.println("小狗名字: " + d.name);
-        System.out.println("小狗颜色: " + d.color);
-        System.out.println("小狗年龄: " + d.age);
+        d.show();
 	}
 }
 
@@ -27,5 +25,12 @@ class Dog
         this.name = name;
         this.color = color;
         this.age = age;
+    }
+
+    public void show()
+    {
+        System.out.println("小狗名字: " + this.name);
+        System.out.println("小狗颜色: " + this.color);
+        System.out.println("小狗年龄: " + this.age);
     }
 }
