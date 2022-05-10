@@ -16,18 +16,25 @@ public class ExtendTheory {
         //  3. 如果子类没有这个属性, 父类有这个属性, 并且可以访问, 则返回信息
         //  4. 如果父类没有这个属性就按照(3)的规则继续找上级父类, 直到 Object类
         System.out.println(son.name);//返回大头儿子
-        System.out.println(son.age);//返回大头爸爸的年龄
+        //System.out.println(son.age);//找到Father.age时,因为是private,所以报错
+        System.out.println(son.getAge());//返回大头爸爸的年龄
+        System.out.println(son.hobby);//返回大头爷爷的爱好
     }
 }
 
 class GrandPa {
     String name = "大头爷爷";
     String hobby = "旅游";
+    int age = 59;
 }
 
 class Father extends GrandPa {
     String name = "大头爸爸";
-    int age = 39;
+    private int age = 39;
+
+    public int getAge() {
+        return age;
+    }
 }
 
 class Son extends Father {
