@@ -42,11 +42,21 @@ public class SmallChangeSys {
                 }
             } else if(menu == 2) {
                 System.out.print("请输入金额:");
-                double amount = scanner.nextDouble();
+                double amount = 0.0;
+                while(true) {
+                    amount = scanner.nextDouble();
+                    if(amount <= 0) {
+                        System.out.println("金额必须大于0");
+                        System.out.print("请输入金额:");
+                    } else {
+                        break;
+                    }
+                }
                 //创建 Income 对象,并赋值
                 Income income = new Income();
                 income.amount = amount;
                 date = new Date();
+
                 income.datetime = simpleDateFormat.format(date);
                 balance += amount;
                 income.balance = balance;
@@ -64,8 +74,16 @@ public class SmallChangeSys {
                 System.out.print("请输入消费名称:");
                 String name = scanner.next();
                 System.out.print("请输入消费金额:");
-                double amount = scanner.nextDouble();
-
+                double amount = 0.0;
+                while(true) {
+                    amount = scanner.nextDouble();
+                    if(amount > balance) {
+                        System.out.println("余额不足");
+                        System.out.print("请输入金额:");
+                    } else {
+                        break;
+                    }
+                }
                 //创建 Income 对象,并赋值
                 Consume consume = new Consume();
                 consume.name = name;
@@ -84,7 +102,18 @@ public class SmallChangeSys {
                 //将临时数组地址拷贝给consumes1
                 consumes = tempConsumes;
             } else if (menu == 4) {
-                break;
+                //用户输入4退出时,给出提示"你确定要退出吗? y/n", 必须输入正确的y/n,否则循环指令,直到输入y或者n
+                char confirm = 'n';
+                while(true) {
+                    System.out.print("你确定要退出吗? y/n:");
+                    confirm = scanner.next().charAt(0);
+                    if(confirm == 'y' || confirm == 'n') {
+                        break;
+                    }
+                }
+                if(confirm == 'y') {
+                    break;
+                }
             } else {
                 System.out.println("输入有误,请重新输入!");
             }
