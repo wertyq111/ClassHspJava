@@ -1,5 +1,6 @@
 package com.homework;
 
+import com.homework.object_.Professor;
 import com.homework.object_.Teacher;
 
 /**
@@ -12,9 +13,9 @@ import com.homework.object_.Teacher;
  */
 public class Homework03 {
     public static void main(String[] args) {
-        Teacher teacher = new Teacher("张三", 27, "实习老师", 5500);
+        Teacher professor = new Professor("张三", 27, "教授", 5500, 1.3);
 
-        teacher.introduce();
+        professor.introduce();
 
     }
 }

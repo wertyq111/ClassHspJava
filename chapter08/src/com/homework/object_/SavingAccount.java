@@ -1,39 +1,65 @@
 package com.homework.object_;
 
-public class SavingAccount{
-    private int num = 3;
+public class SavingAccount extends BankAccount {
+    private int monthNum = 3;
+    private double rate = 0.05;
+    private double handlingFree = 1;
 
-    public SavingAccount() { }
-
-    public int getNum() {
-        return num;
+    public SavingAccount(double initialBalance) {
+        super(initialBalance);
     }
 
-    public void setNum(int num) {
-        this.num = num;
+    public int getMonthNum() {
+        return monthNum;
+    }
+
+    public void setMonthNum(int monthNum) {
+        this.monthNum = monthNum;
+    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
+
+    public double getHandlingFree() {
+        return handlingFree;
+    }
+
+    public void setHandlingFree(double handlingFree) {
+        this.handlingFree = handlingFree;
+    }
+
+    @Override
+    public void deposit(double amount) {
+        if(monthNum <= 0) {
+            System.out.println("收取手续费: " + handlingFree);
+            amount -= handlingFree;
+
+        } else {
+            monthNum--;
+        }
+        super.deposit(amount);
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        if(monthNum <= 0) {
+            System.out.println("收取手续费: " + handlingFree);
+            amount += handlingFree;
+        } else {
+            monthNum--;
+        }
+        super.withdraw(amount);
     }
 
     public void earnMonthlyInterest() {
-        this.num = 3;
-        System.out.println("产生了利息");
-    }
-
-    public BankAccount operate(BankAccount bankAccount, int change, double amount) {
-        if(this.num > 0) {
-            this.num--;
-            if(change == 1) {
-                bankAccount.deposit(amount);
-            } else {
-                bankAccount.withdraw(amount);
-            }
-        } else {
-            if(change == 1) {
-                ((CheckingAccount)bankAccount).depositFormalities(amount);
-            } else if(change == 2) {
-                ((CheckingAccount)bankAccount).withdrawFormalities(amount);
-            }
-        }
-
-        return bankAccount;
+        monthNum = 3;
+        double balanceRate = getBalance() * rate;
+        setBalance(getBalance() + balanceRate);
+        System.out.println("产生了利息: " + balanceRate + " 剩余余额: " + getBalance());
     }
 }

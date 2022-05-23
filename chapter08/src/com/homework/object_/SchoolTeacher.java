@@ -1,30 +1,40 @@
 package com.homework.object_;
 
 public class SchoolTeacher extends Employee{
-    private double tuitionFee;
+    private double classSal;
+    private int classDay;
 
-    public SchoolTeacher(String name, double daySalary, int workDays, double tuitionFee) {
-        super(name, daySalary, workDays);
-        this.tuitionFee = tuitionFee;
+
+    public SchoolTeacher(String name, double daySalary, int workDays, double tuitionFee, double grade) {
+        super(name, daySalary, workDays, grade);
     }
 
-    public SchoolTeacher(String name, double salary, double tuitionFee) {
+    public SchoolTeacher(String name, double salary, double classSal, int classDay) {
         super(name, salary);
-        this.tuitionFee = tuitionFee;
+        this.classSal = classSal;
+        this.classDay = classDay;
     }
 
-    public double getTuitionFee() {
-        return tuitionFee;
+    public double getClassSal() {
+        return classSal;
     }
 
-    public void setTuitionFee(double tuitionFee) {
-        this.tuitionFee = tuitionFee;
+    public void setClassSal(double classSal) {
+        this.classSal = classSal;
+    }
+
+    public int getClassDay() {
+        return classDay;
+    }
+
+    public void setClassDay(int classDay) {
+        this.classDay = classDay;
     }
 
     @Override
     public void printAnnualSalary() {
         System.out.println("老师姓名: " + super.getName() + "\t年薪: "
-                + ((super.getDaySalary() * super.getWorkDays() * 12) + (this.tuitionFee * super.getWorkDays() * 12))
+                + ((super.getDaySalary() * super.getWorkDays() * super.getSalMonth()) + (this.classSal * this.classDay))
         );
     }
 }

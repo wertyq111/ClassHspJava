@@ -29,6 +29,8 @@ public class Homework04 {
         System.out.print("请输入经理日薪:");
         daySalary = scanner.nextDouble();
         Employee manager = new Manager("李四", daySalary, 22, 1.2);
+        //设置奖金金额
+        ((Manager)manager).setBonus(1000);
         manager.printSalary();
     }
 }

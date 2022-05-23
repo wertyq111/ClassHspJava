@@ -1,5 +1,9 @@
 package com.homework;
 
+import com.homework.object_.homework13_object.Person;
+import com.homework.object_.homework13_object.Student;
+import com.homework.object_.homework13_object.Teacher;
+
 /**
  * 案例题目描述：
  * 1. 做一个Student类，Student类有名称(name),性别(sex),年龄(age)学号(stu id),做合理封装，通过构造器在创建对象时将4个属性赋值。
@@ -13,4 +17,38 @@ package com.homework;
  * 8. 定义方法，形参为Person类型，功能：调用学生的study或教师的teach方法
  */
 public class Homework13 {
+    public static void main(String[] args) {
+        Person[] persons = {
+                new Student("张三", '男', 20, 123456789),
+                new Student("李四", '男', 18, 987654321),
+                new Teacher("王五", '女', 30, 10),
+                new Teacher("赵六", '男', 28, 8)
+        };
+
+        //冒泡排序
+        Homework13 homework13 = new Homework13();
+        persons = homework13.bubbleSort(persons);
+
+        //打印输出排序后的多态数组,并调用对应的方法
+        for (Person person : persons) {
+            person.showInfo();
+            System.out.println("---------------------------------");
+        }
+    }
+
+    public Person[] bubbleSort(Person[] persons) {
+        //按照年龄从高到低排序，使用冒泡排序
+        int loopLength = persons.length - 1;
+        for (int i = 0; i < loopLength; i++) {
+            for (int j = 0; j < loopLength - i; j++) {
+                int nextIndex = j + 1;
+                if (persons[j].getAge() < persons[j + 1].getAge()) {
+                    Person temp = persons[j];
+                    persons[j] = persons[nextIndex];
+                    persons[nextIndex] = temp;
+                }
+            }
+        }
+        return persons;
+    }
 }

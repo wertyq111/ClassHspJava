@@ -8,8 +8,8 @@ public class Scientist extends Employee{
         this.awards = awards;
     }
 
-    public Scientist(String name, double daySalary, int workDays, double awards) {
-        super(name, daySalary, workDays);
+    public Scientist(String name, double daySalary, int workDays, double awards, double grade) {
+        super(name, daySalary, workDays, grade);
         this.awards = awards;
     }
 
@@ -23,6 +23,7 @@ public class Scientist extends Employee{
 
     @Override
     public void printAnnualSalary() {
-        System.out.println("科学家姓名: " + super.getName() + "\t年薪: " + ((super.getSalary() * 12) + this.awards));
+        System.out.println("科学家姓名: " + getName() + "\t年薪: "
+                + ((getSalary() * getSalMonth()) + awards));
     }
 }

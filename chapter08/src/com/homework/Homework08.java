@@ -1,7 +1,6 @@
 package com.homework;
 
 import com.homework.object_.BankAccount;
-import com.homework.object_.CheckingAccount;
 import com.homework.object_.SavingAccount;
 
 import java.util.Scanner;
@@ -16,12 +15,12 @@ import java.util.Scanner;
 public class Homework08 {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        SavingAccount savingAccount = new SavingAccount();
 
         System.out.print("请输入余额:");
         double balance = scanner.nextDouble();
-        BankAccount checkingAccount = new CheckingAccount(balance);
-        int num = savingAccount.getNum();
+        BankAccount savingAccount = new SavingAccount(balance);
+
+        int num = 0;
 
         while(true) {
             System.out.print("请选择存款(1)/取款(2)/退出(3): ");
@@ -29,10 +28,22 @@ public class Homework08 {
             System.out.print("请输入金额: ");
             double amount = scanner.nextDouble();
 
-            checkingAccount = savingAccount.operate(checkingAccount, change, amount);
-
             if(change != 1 && change != 2) {
                 break;
+            }
+
+            switch (change) {
+                case 1:
+                    savingAccount.deposit(amount);
+                    break;
+                case 2:
+                    savingAccount.withdraw(amount);
+                    break;
+            }
+
+            num++;
+            if (num % 12 == 0) {
+                ((SavingAccount)savingAccount).earnMonthlyInterest();
             }
         }
     }

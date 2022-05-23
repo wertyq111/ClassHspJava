@@ -14,7 +14,7 @@ public class Homework05 {
         Employee worker = new Worker("小甲", 8000);
         Employee farmer = new Farmer("小乙", 6000);
         Employee waiter = new Waiter("小丙", 7000);
-        Employee teacher = new SchoolTeacher("小丁", 500, 22, 300);
+        Employee teacher = new SchoolTeacher("小丁", 8000, 300, 150);
         Employee scientist = new Scientist("卯先生", 13000, 250000);
 
         worker.printAnnualSalary();

@@ -1,19 +1,26 @@
 package com.homework.object_;
 
 public class CheckingAccount extends BankAccount{
-    public CheckingAccount(double balance) {
-        super(balance);
+    private double handlingFree = 1;
+
+    public CheckingAccount(double initialBalance) {
+        super(initialBalance);
     }
 
-    public void depositFormalities(double amount) {
-        double balance = super.getBalance();
-        balance += (amount - 1);
-        System.out.println("余额剩余: " + balance);
+
+    @Override
+    public void deposit(double amount) {
+        amount -= handlingFree;
+        super.deposit(amount);
     }
 
-    public void withdrawFormalities(double amount) {
-        double balance = super.getBalance();
-        balance -= (amount - 1);
-        System.out.println("余额剩余: " + balance);
+    @Override
+    public void setBalance(double balance) {
+        super.setBalance(balance);
+    }
+
+    public void withdraw(double amount) {
+        amount += handlingFree;
+        super.withdraw(amount);
     }
 }
