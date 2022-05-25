@@ -8,13 +8,25 @@ package com.house_rent.model;
  * 包含业务显示方法: displayMenu(主界面显示)
  */
 public class HouseRentSys extends House {
-    private House[] houseList;
+    private House[] houseList = new House[1];
 
-    public HouseRentSys() { }
+    public HouseRentSys() {
+        houseList[0] = new House("zhan", "150", "临平区", 2500, 0);
+        houseList[0].setId(1);
+    }
 
     public HouseRentSys(String name, String phone, String address, double price, int status) {
         super(name, phone, address, price, status);
     }
+
+    public House[] getHouseList() {
+        return houseList;
+    }
+
+    public void setHouseList(House[] houseList) {
+        this.houseList = houseList;
+    }
+
     public House add(String name, String phone, String address, double price) {
         House house = new House();
         //设置id: 获取已有房源最大的id + 1
@@ -47,7 +59,7 @@ public class HouseRentSys extends House {
     }
 
     @Override
-    public House update(House house, String name, String phone, String address, double price, int status) {
+    public House update(House house, String name, String phone, String address, Double price, Integer status) {
         return super.update(house, name, phone, address, price, status);
     }
 
@@ -58,9 +70,11 @@ public class HouseRentSys extends House {
             if (houseList.length > 0) {
                 House[] tempHouses = new House[houseList.length - 1];
                 if(tempHouses.length > 0) {
+                    int tempIndex = 0;
                     for (int i = 0; i < houseList.length; i++) {
                         if (houseList[i].getId() != id) {
-                            tempHouses[i] = houseList[i];
+                            tempHouses[tempIndex] = houseList[i];
+                            tempIndex++;
                         }
                     }
                 }

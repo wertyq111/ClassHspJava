@@ -71,7 +71,7 @@ public class House {
         this.status = status;
     }
 
-    public House update(House house, String name, String phone, String address, double price, int status) {
+    public House update(House house, String name, String phone, String address, Double price, Integer status) {
         if(name != null) {
             house.setName(name);
         }
@@ -84,13 +84,14 @@ public class House {
             house.setAddress(address);
         }
 
-        if(price != 0) {
+        if(price != null) {
             house.setPrice(price);
         }
 
-        if(status != 0) {
+        if(status != null) {
             house.setStatus(status);
         }
+
         return house;
     }
 }
