@@ -2,6 +2,7 @@ package com.house_rent;
 
 import com.house_rent.model.House;
 import com.house_rent.model.HouseRentSys;
+import com.house_rent_hierarchical.tool.Utility;
 
 import java.util.Scanner;
 
@@ -114,15 +115,15 @@ public class HouseRentSysApp {
         }
 
         System.out.print("姓名(" + house.getName() + "): ");
-        String name = readString(scanner, house.getName());
+        String name = Utility.readString(8, house.getName());
         System.out.print("电话(" + house.getPhone() + "): ");
-        String phone = readString(scanner, house.getPhone());
+        String phone = Utility.readString(11, house.getPhone());
         System.out.print("地址(" + house.getAddress() + "): ");
-        String address = readString(scanner, house.getAddress());
+        String address = Utility.readString(120, house.getAddress());
         System.out.print("月租(" + house.getPrice() + "): ");
-        Double price = readDouble(scanner, house.getPrice());
+        Double price = Utility.readDouble(house.getPrice());
         System.out.print("状态(" + (house.getStatus() == 0 ? "未出租" : "已出租") + "): ");
-        Integer status = readInteger(scanner, house.getStatus());
+        Integer status = Utility.readInt(house.getStatus());
 
         house = houseRentSys.update(house, name, phone, address, price, status);
 
@@ -169,51 +170,5 @@ public class HouseRentSysApp {
         }
 
         return true;
-    }
-
-    public String readString(Scanner scanner, String defaultValue) {
-        String str = readKeyBoard(scanner, true);
-        return str.equals("") ? defaultValue : str;
-    }
-
-    public Double readDouble(Scanner scanner, Double defaultValue) {
-        String str = readKeyBoard(scanner, true);
-        return str.equals("") ? defaultValue : scanner.nextDouble();
-    }
-
-    public Integer readInteger(Scanner scanner, Integer defaultValue) {
-        String str = readKeyBoard(scanner, true);
-        return str.equals("") ? defaultValue : scanner.nextInt();
-    }
-
-    /**
-     * 功能： 读取一个字符串
-     *
-     * @param scanner       读取的长度
-     * @param blankReturn 如果为true ,表示 可以读空字符串。
-     *                    如果为false表示 不能读空字符串。
-     *                    <p>
-     *                    如果输入为空，或者输入大于limit的长度，就会提示重新输入。
-     * @return
-     */
-    private static String readKeyBoard(Scanner scanner, boolean blankReturn) {
-
-        //定义了字符串
-        String line = "";
-
-        //scanner.hasNextLine() 判断有没有下一行
-        while (scanner.hasNextLine()) {
-            line = scanner.nextLine();//读取这一行
-
-            //如果line.length=0, 即用户没有输入任何内容，直接回车
-            if (line.length() == 0) {
-                if (blankReturn) return line;//如果blankReturn=true,可以返回空串
-                else continue; //如果blankReturn=false,不接受空串，必须输入内容
-            }
-
-            break;
-        }
-
-        return line;
     }
 }
