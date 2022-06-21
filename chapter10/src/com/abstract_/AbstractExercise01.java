@@ -17,8 +17,5 @@ public class AbstractExercise01 {
 
         ce.work();
         m.work();
-
-
-
     }
 }
