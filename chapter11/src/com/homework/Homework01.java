@@ -1,5 +1,7 @@
 package com.homework;
 
+import java.util.Scanner;
+
 /**
  * @author zhouxufeng
  * @version 1.0
@@ -15,4 +17,58 @@ package com.homework;
  */
 @SuppressWarnings({"all"})
 public class Homework01 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        while(true) {
+            String colorName = scanner.next();
+
+            switch(colorName) {
+                case "red":
+                    Color.RED.show();
+                    break;
+                case "blue":
+                    Color.BLUE.show();
+                    break;
+                case "black":
+                    Color.BLACK.show();
+                    break;
+                case "yellow":
+                    Color.YELLOW.show();
+                    break;
+                case "green":
+                    Color.GREEN.show();
+                    break;
+            }
+        }
+    }
+}
+
+@SuppressWarnings({"all"})
+enum Color implements Colors{
+    RED(255,0,0),
+    BLUE(0,0,255),
+    BLACK(0,0,0),
+    YELLOW(255,255,0),
+    GREEN(0,255,0);
+
+    private int redValue;
+    private int greenValue;
+    private int blueValue;
+
+    private Color(int redValue, int greenValue, int blueValue) {
+        this.redValue = redValue;
+        this.greenValue = greenValue;
+        this.blueValue = blueValue;
+    }
+
+    @Override
+    public void show() {
+        System.out.println("当前颜色属性：" + redValue + ", " + greenValue + ", " + blueValue);
+    }
+}
+
+@SuppressWarnings({"all"})
+interface Colors {
+    void show();
 }
