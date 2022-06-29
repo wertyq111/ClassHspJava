@@ -32,6 +32,7 @@ public class Homework03 {
         if(names.length != 3) {
             throw new RuntimeException("名字长度不符合");
         }
-        return new String(names[2] + "," + names[0] + " ." + names[1].substring(0,1));
+        //return new String(names[2] + "," + names[0] + " ." + names[1].substring(0,1).toUpperCase());
+        return String.format("%s,%s .%c", names[2], names[0], names[1].toUpperCase().charAt(0));
     }
 }
