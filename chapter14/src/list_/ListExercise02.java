@@ -24,14 +24,16 @@ public class ListExercise02 {
         System.out.println("===原始数据===");
         System.out.println(list);
 
-        list.sort(new Comparator(){
-            @Override
-            public int compare(Object o1, Object o2) {
-                double p1 = ((Book)o1).getPrice();
-                double p2 = ((Book)o2).getPrice();
-                return (p1 < p2) ? -1 : (p1 > p2) ? 1 : 0;
-            }
-        });
+//        list.sort(new Comparator(){
+//            @Override
+//            public int compare(Object o1, Object o2) {
+//                double p1 = ((Book)o1).getPrice();
+//                double p2 = ((Book)o2).getPrice();
+//                return (p1 < p2) ? -1 : (p1 > p2) ? 1 : 0;
+//            }
+//        });
+
+        list = bulletSort(list);
 
         for(Object b: list){
             System.out.println(String.format("名称：%s  价格：%.2f  作者：%s",
@@ -40,6 +42,20 @@ public class ListExercise02 {
                     ((Book)b).getAuthor()
             ));
         }
+    }
+
+    public static List bulletSort(List list){
+        int listSize = list.size();
+        for(int i = 0; i < listSize - 1; i++){
+            for(int j = 0; j < listSize - 1 - i; j++){
+                if(((Book)list.get(j)).getPrice() > ((Book)list.get(j + 1)).getPrice()){
+                    Object temp = list.get(j);
+                    list.set(j, list.get(j + 1));
+                    list.set(j + 1, temp);
+                }
+            }
+        }
+        return list;
     }
 }
 
