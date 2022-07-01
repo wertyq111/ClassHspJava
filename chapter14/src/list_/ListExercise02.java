@@ -15,14 +15,16 @@ import java.util.*;
 public class ListExercise02 {
     public static void main(String[] args) {
         //List list = new ArrayList();
-        //List list = new LinkedList();
-        List list = new Vector();
+        List list = new LinkedList();
+        //List list = new Vector();
 
         list.add(new Book("Java编程思想", "Bruce Eckel", 79));
         list.add(new Book("Head First Java", "Kathy Sierra", 99));
         list.add(new Book("Effective Java", "Joshua Bloch", 49));
         System.out.println("===原始数据===");
         System.out.println(list);
+
+        list.remove(new Book("Head First Java", "Kathy Sierra", 99));
 
 //        list.sort(new Comparator(){
 //            @Override
