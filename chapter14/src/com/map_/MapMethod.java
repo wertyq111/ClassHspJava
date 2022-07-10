@@ -15,7 +15,7 @@ public class MapMethod {
         Map map = new HashMap();
         map.put("邓超", "孙俪");
         map.put("张三", "孙艺伟");
-        map.put("王宝强", "孙悦");
+        map.put("商品货号", "孙悦");
         map.put("李四", "孙武");
         map.put(null, "赵五");
 
