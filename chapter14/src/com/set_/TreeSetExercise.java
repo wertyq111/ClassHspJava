@@ -30,6 +30,7 @@ public class TreeSetExercise {
         treeSet.add("lucy");
         treeSet.add("john");
         treeSet.add("mary");
+        treeSet.add("mary");
         treeSet.add("tom");
         treeSet.add("adbort");
         treeSet.add("111");
