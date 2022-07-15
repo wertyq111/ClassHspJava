@@ -1,6 +1,5 @@
 package com.homework;
 
-import java.util.Comparator;
 import java.util.TreeSet;
 
 /**
