@@ -9,7 +9,6 @@ import javax.sound.midi.Track;
  */
 @SuppressWarnings({"all"})
 public class Hero extends TankModel {
-
     public Hero(int x, int y) {
         super(x, y);
     }

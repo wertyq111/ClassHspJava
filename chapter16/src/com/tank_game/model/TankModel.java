@@ -15,10 +15,18 @@ public class TankModel{
     private int coverSize = 40;
     private int gunWidth = 5;
     private int gunHeight = 40;
+    private int direct = 0;// 0:向上， 1:向右，2:向下, 3:向左
+    private int speed = 1;
 
     public TankModel(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public TankModel(int x, int y, int direct) {
+        this.x = x;
+        this.y = y;
+        this.direct = direct;
     }
 
     public int getX() {
@@ -91,5 +99,42 @@ public class TankModel{
 
     public void setGunHeight(int gunHeight) {
         this.gunHeight = gunHeight;
+    }
+
+    public int getDirect() {
+        return direct;
+    }
+
+    public void setDirect(int direct) {
+        this.direct = direct;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    //向下左右移动
+    public void moveUp() {
+        direct = 0;
+        y -= speed;
+    }
+
+    public void moveDown() {
+        direct = 2;
+        y += speed;
+    }
+
+    public void moveLeft() {
+        direct = 3;
+        x -= speed;
+    }
+
+    public void moveRight() {
+        direct = 1;
+        x += speed;
     }
 }

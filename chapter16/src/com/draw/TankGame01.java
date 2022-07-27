@@ -14,9 +14,10 @@ public class TankGame01 extends JFrame {
     private AreaPanel ap = null;
 
     public TankGame01() {
-        ap = new AreaPanel();
+        ap = new AreaPanel(1024, 750);
         this.add(ap);
-        this.setSize(1024, 1024);
+        this.setSize(ap.getDrawWidth(), ap.getDrawHeight());
+        this.addKeyListener(ap);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
     }

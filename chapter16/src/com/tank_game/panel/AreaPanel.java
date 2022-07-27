@@ -1,10 +1,16 @@
 package com.tank_game.panel;
 
+import com.tank_game.model.Enemy;
 import com.tank_game.model.Hero;
 import com.tank_game.model.TankModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * @author zhouxufeng
@@ -12,11 +18,53 @@ import java.awt.*;
  * 区域地图
  */
 @SuppressWarnings({"all"})
-public class AreaPanel extends JPanel {
-    Hero hero = null;
+public class AreaPanel extends JPanel implements KeyListener {
+    private Hashtable<Integer, Hero> heros = new Hashtable<>();
+    private Vector<Enemy> enemies = new Vector<>();
+    private int drawWidth;
+    private int drawHeight;
+    private int enemiesSize = 3;
 
-    public AreaPanel() {
-        hero = new Hero(100, 100);
+    public AreaPanel(int drawWidth, int drawHeight) {
+        this.drawWidth = drawWidth;
+        this.drawHeight = drawHeight;
+        heros.put(1, new Hero(drawWidth / 3, drawHeight - (drawWidth / 10)));
+
+        for (int i = 0; i < enemiesSize; i++) {
+            enemies.add(new Enemy((drawWidth / 5) + ((i + 1) * (drawWidth / 10)), 0, 2));
+        }
+    }
+
+    public Hashtable<Integer, Hero> getHeros() {
+        return heros;
+    }
+
+    public void setHeros(Hashtable<Integer, Hero> heros) {
+        this.heros = heros;
+    }
+
+    public Vector<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    public void setEnemies(Vector<Enemy> enemies) {
+        this.enemies = enemies;
+    }
+
+    public int getDrawWidth() {
+        return drawWidth;
+    }
+
+    public void setDrawWidth(int drawWidth) {
+        this.drawWidth = drawWidth;
+    }
+
+    public int getDrawHeight() {
+        return drawHeight;
+    }
+
+    public void setDrawHeight(int drawHeight) {
+        this.drawHeight = drawHeight;
     }
 
     @Override
@@ -26,9 +74,15 @@ public class AreaPanel extends JPanel {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 1024, 1024);
 
-        //画出坦克
-        hero.setY(hero.getY() + 50);
-        drawTank(hero, g, 2, 0);
+        //画出正义坦克
+        for (Map.Entry<Integer, Hero> hero : heros.entrySet()) {
+            drawTank(hero.getValue(), g, hero.getKey());
+        }
+
+        //画出敌人坦克
+        for (Enemy enemy : enemies) {
+            drawTank(enemy, g, 3);
+        }
     }
 
     /**
@@ -39,22 +93,28 @@ public class AreaPanel extends JPanel {
      * @param direct
      * @param type
      */
-    public void drawTank(TankModel tank, Graphics g, int direct, int type) {
+    public void drawTank(TankModel tank, Graphics g, int type) {
         switch (type) {
-            case 0: //我们的坦克
+            case 1: //坦克1
                 g.setColor(Color.cyan);
                 break;
-            case 1: //设置敌人的坦克
+            case 2: //坦克2
                 g.setColor(Color.yellow);
+                break;
+            case 3: //敌人坦克
+                g.setColor(Color.white);
                 break;
         }
 
+        //设置坦克移动速度
+        tank.setSpeed(3);
+
         //根据坦克方向，来绘制坦克
-        getLeftTrack(tank, g, direct);
-        getRightTrack(tank, g, direct);
-        getCabin(tank, g, direct);
-        getCover(tank, g, direct);
-        getGun(tank, g, direct);
+        getLeftTrack(tank, g);
+        getRightTrack(tank, g);
+        getCabin(tank, g);
+        getCover(tank, g);
+        getGun(tank, g);
     }
 
     /**
@@ -64,8 +124,8 @@ public class AreaPanel extends JPanel {
      * @param g
      * @param dierct
      */
-    public void getLeftTrack(TankModel tank, Graphics g, int dierct) {
-        switch (dierct) {
+    public void getLeftTrack(TankModel tank, Graphics g) {
+        switch (tank.getDirect()) {
             case 0:
             case 2:
                 g.fill3DRect(tank.getX(), tank.getY(), tank.getTrackWidth(), tank.getTrackHeight(), false);
@@ -84,10 +144,10 @@ public class AreaPanel extends JPanel {
      * @param g
      * @param dierct
      */
-    public void getRightTrack(TankModel tank, Graphics g, int dierct) {
+    public void getRightTrack(TankModel tank, Graphics g) {
         int rightTrackX = tank.getX() + tank.getTrackWidth() + tank.getCabinWidth();
         int rightTrackY = tank.getY();
-        switch (dierct) {
+        switch (tank.getDirect()) {
             case 0:
             case 2:
                 g.fill3DRect(rightTrackX, rightTrackY, tank.getTrackWidth(), tank.getTrackHeight(), false);
@@ -108,10 +168,10 @@ public class AreaPanel extends JPanel {
      * @param g
      * @param dierct
      */
-    public void getCabin(TankModel tank, Graphics g, int dierct) {
+    public void getCabin(TankModel tank, Graphics g) {
         int cabinX = tank.getX() + tank.getTrackWidth();
         int cabinY = tank.getY() + (tank.getTrackHeight() / 12);
-        switch (dierct) {
+        switch (tank.getDirect()) {
             case 0:
             case 2:
                 g.fill3DRect(cabinX, cabinY, tank.getCabinWidth(), tank.getCabinHeight(), false);
@@ -132,10 +192,10 @@ public class AreaPanel extends JPanel {
      * @param g
      * @param dierct
      */
-    public void getCover(TankModel tank, Graphics g, int dierct) {
+    public void getCover(TankModel tank, Graphics g) {
         int coverX = tank.getX() + tank.getTrackWidth();
         int coverY = tank.getY() + (tank.getTrackHeight() / 6);
-        switch (dierct) {
+        switch (tank.getDirect()) {
             case 0:
             case 2:
                 g.fillOval(coverX, coverY, tank.getCoverSize(), tank.getCoverSize());
@@ -156,10 +216,10 @@ public class AreaPanel extends JPanel {
      * @param g
      * @param dierct
      */
-    public void getGun(TankModel tank, Graphics g, int dierct) {
+    public void getGun(TankModel tank, Graphics g) {
         int gunX = tank.getX() + tank.getTrackWidth() + (tank.getCabinWidth() / 2) - (tank.getGunWidth() / 2);
         int gunY = tank.getY() - 5;
-        switch (dierct) {
+        switch (tank.getDirect()) {
             case 0:
                 g.fillRect(gunX, gunY, tank.getGunWidth(), tank.getGunHeight());
                 break;
@@ -179,5 +239,52 @@ public class AreaPanel extends JPanel {
                 g.fillRect(gunX, gunY, tank.getGunHeight(), tank.getGunWidth());
                 break;
         }
+    }
+
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_W:
+                heros.get(1).moveUp();
+                break;
+            case KeyEvent.VK_S:
+                heros.get(1).moveDown();
+                break;
+            case KeyEvent.VK_A:
+                heros.get(1).moveLeft();
+                break;
+            case KeyEvent.VK_D:
+                heros.get(1).moveRight();
+                break;
+            case KeyEvent.VK_1:
+                if (!heros.containsKey(2)) heros.put(2, new Hero(drawWidth / 2, drawHeight - 100));
+                break;
+            case KeyEvent.VK_UP:
+                if (heros.containsKey(2)) heros.get(2).moveUp();
+                break;
+            case KeyEvent.VK_DOWN:
+                if (heros.containsKey(2)) heros.get(2).moveDown();
+                break;
+            case KeyEvent.VK_LEFT:
+                if (heros.containsKey(2)) heros.get(2).moveLeft();
+                break;
+            case KeyEvent.VK_RIGHT:
+                if (heros.containsKey(2)) heros.get(2).moveRight();
+                break;
+        }
+
+        //让面板重绘
+        repaint();
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 }
