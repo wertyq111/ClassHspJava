@@ -1,6 +1,5 @@
-package com.draw;
+package com.tank_game;
 
-import com.tank_game.model.TankModel;
 import com.tank_game.panel.AreaPanel;
 
 import javax.swing.*;
