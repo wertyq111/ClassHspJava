@@ -16,18 +16,29 @@ public class SellTicket {
 //        sellTicket01.start();
 //        sellTicket02.start();
 //        sellTicket03.start();
+//
+//        SellTicket02 sellTicket02 = new SellTicket02();
+//        Thread thread01 = new Thread(sellTicket02);
+//        Thread thread02 = new Thread(sellTicket02);
+//        Thread thread03 = new Thread(sellTicket02);
+//        thread01.setName("1号");
+//        thread02.setName("2号");
+//        thread03.setName("3号");
+//        thread01.setPriority(Thread.MIN_PRIORITY);
+//        thread02.setPriority(Thread.MAX_PRIORITY);
+//        thread01.start();
+//        thread02.join();
+//        thread03.start();
 
-        SellTicket02 sellTicket02 = new SellTicket02();
-        Thread thread01 = new Thread(sellTicket02);
-        Thread thread02 = new Thread(sellTicket02);
-        Thread thread03 = new Thread(sellTicket02);
+        SellTicket03 sellTicket03 = new SellTicket03();
+        Thread thread01 = new Thread(sellTicket03);
+        Thread thread02 = new Thread(sellTicket03);
+        Thread thread03 = new Thread(sellTicket03);
         thread01.setName("1号");
         thread02.setName("2号");
         thread03.setName("3号");
-        thread01.setPriority(Thread.MIN_PRIORITY);
-        thread02.setPriority(Thread.MAX_PRIORITY);
         thread01.start();
-        thread02.join();
+        thread02.start();
         thread03.start();
     }
 }
@@ -84,6 +95,51 @@ class SellTicket02 implements Runnable {
 
             System.out.println("窗口" + Thread.currentThread().getName() + " 售出一张票，剩余票数:" + tickeNnum);
             tickeNnum--;
+        }
+    }
+}
+
+//实现接口方式， 使用synchronized实现线程同步
+class SellTicket03 implements Runnable {
+    private static int ticketNum = 10000; //让多个线程共享 ticketNum
+
+    //如果在静态方法中实现一个同步代码块
+    public /*synchronized*/static void m1() { //同步静态方法
+        synchronized (SellTicket03.class) { //同步静态代码块 默认锁对象：当前类.class
+            System.out.println("m1");
+        }
+    }
+
+    //说明
+    // 1. public synchronized boolean sell() {} 就是一个同步方法
+    // 2. 这时锁在 this 对象
+    // 3.  也可以在代码块上写 synchronized ,同步代码块
+    private /*synchronized*/ boolean sell() { //同步方法， 在同一时刻， 只能有一个线程来执行sell方法
+        synchronized (this) { //同步代码块
+            if (ticketNum <= 0) {
+                System.out.println("窗口" + Thread.currentThread().getName() + "售票结束...");
+                return false;
+            }
+
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("窗口" + Thread.currentThread().getName() + " 售出一张票，剩余票数:" + ticketNum);
+            ticketNum--;
+
+            return true;
+        }
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            if(!sell()) {
+                break;
+            }
         }
     }
 }
