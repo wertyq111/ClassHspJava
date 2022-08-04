@@ -1,9 +1,6 @@
 package com.tank_game.panel;
 
-import com.tank_game.model.Enemy;
-import com.tank_game.model.Hero;
-import com.tank_game.model.TankModel;
-import com.tank_game.threads.Bullet;
+import com.tank_game.model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,12 +17,16 @@ import java.util.Vector;
  */
 @SuppressWarnings({"all"})
 //为了让Areapanel 不停的重回子弹，
-public class AreaPanel extends JPanel implements KeyListener {
-    private Hashtable<Integer, Hero> heros = new Hashtable<>();
-    private Vector<Enemy> enemies = new Vector<>();
+public class AreaPanel extends JPanel implements KeyListener, Runnable {
+    private Hashtable<Integer, Hero> heros = new Hashtable<>(); //正义坦克
+    private Vector<Enemy> enemies = new Vector<>(); //敌人坦克
+    private Vector<Explosion> explosions = new Vector<>(); //爆炸现象
     private int drawWidth;
     private int drawHeight;
     private int enemiesSize = 3;
+    private Image boomPart1 = null;
+    private Image boomPart2 = null;
+    private Image boomPart3 = null;
 
     public AreaPanel(int drawWidth, int drawHeight) {
         this.drawWidth = drawWidth;
@@ -35,6 +36,12 @@ public class AreaPanel extends JPanel implements KeyListener {
         for (int i = 0; i < enemiesSize; i++) {
             enemies.add(new Enemy((drawWidth / 5) + ((i + 1) * (drawWidth / 10)), 0, 2));
         }
+
+        boomPart1 = Toolkit.getDefaultToolkit().getImage("./img/boom_part1.png");
+        boomPart2 = Toolkit.getDefaultToolkit().getImage("./img/boom_part2.png");
+        boomPart3 = Toolkit.getDefaultToolkit().getImage("./img/boom_part3.png");
+        explosions.add(new Explosion(-60, -60));
+
     }
 
     public Hashtable<Integer, Hero> getHeros() {
@@ -75,21 +82,67 @@ public class AreaPanel extends JPanel implements KeyListener {
         //设置颜色并填充区域范围
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 1024, 1024);
+        g.drawImage(boomPart3, 0, 0, 0, 0, this);
+
 
         //画出正义坦克
         for (Map.Entry<Integer, Hero> hero : heros.entrySet()) {
+            hero.getValue().setSpeed(10);
             drawTank(hero.getValue(), g, hero.getKey());
+            if(!hero.getValue().getBullets().isEmpty()){
+                Vector<Bullet> bullets = hero.getValue().getBullets();
+                for (int i = 0; i < bullets.size(); i++) {
+                    Bullet bullet = bullets.get(i);
+                    bullet.setSpeed(10);
+                    if(bullet.isLive()) {
+                        g.fillOval(bullet.getX(), bullet.getY(), 5, 5);
+                    } else {
+                        hero.getValue().removeBullet(bullet);
+                    }
+                }
+            }
         }
 
-        if(heros.get(1).bullet != null) {
-            System.out.println("子弹加载中...");
-            Bullet bullet = heros.get(1).getBullet();
-            g.fillOval(bullet.getX(), bullet.getY(), 5, 5);
+        //画出坦克爆炸效果
+        for(int num = 0; num < explosions.size(); num++) {
+            Explosion explosion = explosions.get(num);
+
+            int number = explosion.getLifeTime();
+            g.drawImage(boomPart2, explosion.getX(), explosion.getY(), 60, 60, this);
+
+            if(number > 6) {
+                g.drawImage(boomPart3, explosion.getX(), explosion.getY(), 60, 60, this);
+            } else if(number > 3) {
+                g.drawImage(boomPart2, explosion.getX(), explosion.getY(), 60, 60, this);
+            } else if(number > 0) {
+                g.drawImage(boomPart1, explosion.getX(), explosion.getY(), 60, 60, this);
+            }
+
+            //减少爆炸生命周期
+            explosion.blowUp();
+
+            if(explosion.isLive() == false) {
+                explosions.remove(explosion);
+            }
         }
 
         //画出敌人坦克
-        for (Enemy enemy : enemies) {
-            drawTank(enemy, g, 3);
+        for (int num = 0; num < enemies.size(); num++) {
+            Enemy enemy = enemies.get(num);
+            if(enemy.isLive()) {
+                drawTank(enemy, g, 3);
+            }
+//            if(enemy.getBullets().size() > 0){
+//                Vector<Bullet> bullets = enemy.getBullets();
+//                for (int i = 0; i < bullets.size(); i++) {
+//                    Bullet bullet = bullets.get(i);
+//                    if(bullet.isLive()) {
+//                        g.fillOval(bullet.getX(), bullet.getY(), 5, 5);
+//                    } else {
+//                        enemy.removeBullet(bullet);
+//                    }
+//                }
+//            }
         }
     }
 
@@ -249,6 +302,26 @@ public class AreaPanel extends JPanel implements KeyListener {
         }
     }
 
+    /**
+     * 攻击到坦克
+     * @param bullet
+     * @param enemy
+     */
+    public void hitTank(Bullet bullet, Enemy enemy) {
+        Hashtable<String, Integer> tankArea = enemy.getTankArea();
+        if(enemy.isLive() && bullet.getX() > tankArea.get("minX")
+                && bullet.getX() < tankArea.get("maxX")
+                && bullet.getY() > tankArea.get("minY")
+                && bullet.getY() < tankArea.get("maxY")
+        ) {
+            Explosion explosion = new Explosion(tankArea.get("minX"), tankArea.get("minY"));
+            System.out.println("add" + explosion.getLifeTime());
+            explosions.add(explosion);
+            bullet.setLive(false);
+            enemy.setLive(false);
+        }
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -284,11 +357,10 @@ public class AreaPanel extends JPanel implements KeyListener {
             case KeyEvent.VK_RIGHT:
                 if (heros.containsKey(2)) heros.get(2).moveRight();
                 break;
-        }
-
-        if(e.getKeyCode() == KeyEvent.VK_J) {
-            Hero hero = heros.get(1);
-            hero.fire();
+            case KeyEvent.VK_J:
+                Hero hero = heros.get(1);
+                hero.fire();
+                break;
         }
 
         //让面板重绘
@@ -300,16 +372,27 @@ public class AreaPanel extends JPanel implements KeyListener {
 
     }
 
-//    @Override
-//    public void run() { //每隔100毫秒，重绘区域，刷新绘图区域，子弹就移动
-//        while(true) {
-//            try {
-//                Thread.sleep(100);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//
-//            this.repaint();
-//        }
-//    }
+    @Override
+    public void run() { //每隔100毫秒，重绘区域，刷新绘图区域，子弹就移动
+        while(true) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //判断坦克是否被击中
+            for(Hero hero:heros.values()) {
+                if(hero.getBullets().size() > 0) {
+                    for(int i = 0; i < enemies.size(); i++) {
+                        for(Bullet bullet:hero.getBullets()) {
+                            hitTank(bullet, enemies.get(i));
+                        }
+                    }
+                }
+            }
+
+            repaint();
+        }
+    }
 }

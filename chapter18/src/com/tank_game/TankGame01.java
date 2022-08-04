@@ -15,8 +15,8 @@ public class TankGame01 extends JFrame {
     public TankGame01() {
         ap = new AreaPanel(1024, 750);
         //将ap 放入到Thread并启动
-        //Thread thread = new Thread(ap);
-        //thread.start();
+        Thread thread = new Thread(ap);
+        thread.start();
         this.add(ap);
         this.setSize(ap.getDrawWidth(), ap.getDrawHeight());
         this.addKeyListener(ap);

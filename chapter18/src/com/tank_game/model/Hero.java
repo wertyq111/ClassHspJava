@@ -1,8 +1,7 @@
 package com.tank_game.model;
 
-import com.tank_game.threads.Bullet;
-
-import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * @author zhouxufeng
@@ -11,26 +10,26 @@ import java.util.HashMap;
  */
 @SuppressWarnings({"all"})
 public class Hero extends TankModel {
-    public Bullet bullet = null;
+    //定义一个Bullet对象， 表示一个发射子弹(线程)
+    private Vector<Bullet> bullets = new Vector<>();
     public Hero(int x, int y) {
         super(x, y);
     }
 
     public void fire() {
-        HashMap<Character, Integer> bulletCoordinate = getBulletCoordinate();
-        this.bullet = new Bullet(bulletCoordinate.get('x'), bulletCoordinate.get('y'), getDirect());
+        //根据当前坦克位置获取字段坐标
+        Hashtable<Character, Integer> bulletCoordinate = getBulletCoordinate();
+        Bullet bullet = new Bullet(bulletCoordinate.get('x'), bulletCoordinate.get('y'), getDirect());
+        bullets.add(bullet);
 
-        new Thread(this.bullet).start();
-
-        while(true) {
-            if(!this.bullet.isLive()) {
-                setFire(false);
-                break;
-            }
-        }
+        new Thread(bullet).start();
     }
 
-    public Bullet getBullet() {
-        return bullet;
+    public Vector<Bullet> getBullets() {
+        return bullets;
+    }
+
+    public void removeBullet(Bullet bullet) {
+        bullets.remove(bullet);
     }
 }

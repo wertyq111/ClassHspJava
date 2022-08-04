@@ -2,6 +2,7 @@ package com.tank_game.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * @author zhouxufeng
@@ -11,16 +12,16 @@ import java.util.HashMap;
 public class TankModel{
     private int x;
     private int y;
-    private int trackWidth = 10;
-    private int trackHeight = 60;
-    private int cabinWidth = 40;
-    private int cabinHeight = 50;
-    private int coverSize = 40;
-    private int gunWidth = 5;
-    private int gunHeight = 40;
+    private int trackWidth = 10; //履带宽度
+    private int trackHeight = 60; // 履带长度
+    private int cabinWidth = 40; // 舱体宽度
+    private int cabinHeight = 50; //舱体长度
+    private int coverSize = 40; //舱门半径
+    private int gunWidth = 5; //炮管宽度
+    private int gunHeight = 40; // 炮管长度
     private int direct = 0;// 0:向上， 1:向右，2:向下, 3:向左
     private int speed = 1;
-    private boolean fire = false;
+    private boolean live = true;
 
     public TankModel(int x, int y) {
         this.x = x;
@@ -121,12 +122,12 @@ public class TankModel{
         this.speed = speed;
     }
 
-    public boolean isFire() {
-        return fire;
+    public boolean isLive() {
+        return live;
     }
 
-    public void setFire(boolean fire) {
-        this.fire = fire;
+    public void setLive(boolean live) {
+        this.live = live;
     }
 
     //向下左右移动
@@ -150,17 +151,20 @@ public class TankModel{
         x += speed;
     }
 
-    public HashMap<Character, Integer> getBulletCoordinate() {
-        HashMap<Character, Integer> bulletCoordinate = new HashMap<>();
-        int bulletX = 0;
-        int bulletY = 0;
+    /**
+     * 获取子弹坐标
+     * @return Hashtable
+     */
+    public Hashtable<Character, Integer> getBulletCoordinate() {
+        Hashtable<Character, Integer> bulletCoordinate = new Hashtable<>();
+        int bulletX = getX();
+        int bulletY = getY();
         switch (getDirect()) {
             case 0:
                 bulletX = getX() + getTrackWidth() + (getCabinWidth() / 2) - (getGunWidth() / 2);
-                bulletY = getY();
                 break;
             case 1:
-                bulletX = getX() + (getTrackHeight() / 12) + (getCabinHeight() / 2) + getGunWidth();
+                bulletX = getX() + getTrackHeight() + 5;
                 bulletY = getY() + getTrackWidth() + (getCabinWidth() / 2) - (getGunWidth() / 2);
                 break;
             case 2:
@@ -168,7 +172,6 @@ public class TankModel{
                 bulletY = getY() + (getTrackHeight() / 12) + (getCabinHeight() / 2) + getGunHeight();
                 break;
             case 3:
-                bulletX = getX();
                 bulletY = getY() + getTrackWidth() + (getCabinWidth() / 2) - (getGunWidth() / 2);
                 break;
         }
@@ -177,5 +180,34 @@ public class TankModel{
         bulletCoordinate.put('y', bulletY);
 
         return bulletCoordinate;
+    }
+
+    /**
+     * 获取坦克区域
+     * @return Hashtable
+     */
+    public Hashtable<String, Integer> getTankArea() {
+        Hashtable<String, Integer> tankArea = new Hashtable<>();
+        int maxX = x;
+        int maxY = y;
+        switch (getDirect()) {
+            case 0:
+            case 2:
+                maxX = x + (2 * trackWidth) + cabinWidth;
+                maxY = y + trackHeight;
+                break;
+            case 1:
+            case 3:
+                maxX = x + trackHeight;
+                maxY = y + (2 * trackWidth) + cabinWidth;
+                break;
+        }
+        tankArea.put("minX", x);
+        tankArea.put("maxX", maxX);
+        tankArea.put("minY", y);
+        tankArea.put("maxY", maxY);
+
+        return tankArea;
+
     }
 }

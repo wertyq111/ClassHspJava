@@ -1,4 +1,4 @@
-package com.tank_game.threads;
+package com.tank_game.model;
 
 import com.tank_game.model.TankModel;
 
@@ -62,7 +62,7 @@ public class Bullet implements Runnable {
 
     @Override
     public void run() {
-        while (isLive) {
+            while (isLive) {
             switch (direct) {
                 case 0:
                     y -= speed;
@@ -78,7 +78,7 @@ public class Bullet implements Runnable {
                     break;
             }
 
-            System.out.println("子弹坐标: x=" + x + ", y=" + y);
+            //System.out.println("子弹坐标: x=" + x + ", y=" + y);
 
             try {
                 Thread.sleep(50);
@@ -86,9 +86,9 @@ public class Bullet implements Runnable {
                 e.printStackTrace();
             }
 
-            if (!(x >= 0 && x <= 1024 && y >= 0 && y <= 1024)) {
+            if (!(x >= 0 && x <= 1024 && y >= 0 && y <= 750 && isLive)) {
+                //System.out.println("子弹销毁");
                 isLive = false;
-                System.out.println("子弹销毁");
                 break;
             }
         }
