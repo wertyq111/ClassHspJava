@@ -1,7 +1,5 @@
 package com.tank_game.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -133,22 +131,30 @@ public class TankModel{
     //向下左右移动
     public void moveUp() {
         direct = 0;
-        y -= speed;
+        if(y > 0) {
+            y -= speed;
+        }
     }
 
     public void moveDown() {
         direct = 2;
-        y += speed;
+        if(y < (750 - trackHeight)) {
+            y += speed;
+        }
     }
 
     public void moveLeft() {
         direct = 3;
-        x -= speed;
+        if(x > 0) {
+            x -= speed;
+        }
     }
 
     public void moveRight() {
         direct = 1;
-        x += speed;
+        if(x < (1024 - trackHeight)) {
+            x += speed;
+        }
     }
 
     /**

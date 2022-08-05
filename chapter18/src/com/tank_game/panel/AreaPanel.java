@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -16,14 +15,14 @@ import java.util.Vector;
  * 区域地图
  */
 @SuppressWarnings({"all"})
-//为了让Areapanel 不停的重回子弹，
+//为了让Areapanel 不停的重绘子弹，
 public class AreaPanel extends JPanel implements KeyListener, Runnable {
     private Hashtable<Integer, Hero> heros = new Hashtable<>(); //正义坦克
     private Vector<Enemy> enemies = new Vector<>(); //敌人坦克
     private Vector<Explosion> explosions = new Vector<>(); //爆炸现象
     private int drawWidth;
     private int drawHeight;
-    private int enemiesSize = 3;
+    private int enemiesSize = 10;
     private Image boomPart1 = null;
     private Image boomPart2 = null;
     private Image boomPart3 = null;
@@ -34,7 +33,9 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
         heros.put(1, new Hero(drawWidth / 3, drawHeight - (drawWidth / 10)));
 
         for (int i = 0; i < enemiesSize; i++) {
-            enemies.add(new Enemy((drawWidth / 5) + ((i + 1) * (drawWidth / 10)), 0, 2));
+            Enemy enemy = new Enemy((drawWidth / enemiesSize) + ((i + 1) * (drawWidth / 10)), 0, 2);
+            enemies.add(enemy);
+            new Thread(enemy).start();
         }
 
         boomPart1 = Toolkit.getDefaultToolkit().getImage("./img/boom_part1.png");
@@ -86,42 +87,63 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
 
 
         //画出正义坦克
-        for (Map.Entry<Integer, Hero> hero : heros.entrySet()) {
-            hero.getValue().setSpeed(10);
-            drawTank(hero.getValue(), g, hero.getKey());
-            if(!hero.getValue().getBullets().isEmpty()){
-                Vector<Bullet> bullets = hero.getValue().getBullets();
-                for (int i = 0; i < bullets.size(); i++) {
-                    Bullet bullet = bullets.get(i);
+        for(int i = 1; i <= heros.size(); i++) {
+            Hero hero = heros.get(i);
+            if (hero.isLive()) {
+                drawTank(hero, g, i);
+            }
+            if (hero != null && !hero.getBullets().isEmpty()) {
+                Vector<Bullet> bullets = hero.getBullets();
+                for (int j = 0; j < bullets.size(); j++) {
+                    Bullet bullet = bullets.get(j);
                     bullet.setSpeed(10);
-                    if(bullet.isLive()) {
+                    if (bullet.isLive()) {
                         g.fillOval(bullet.getX(), bullet.getY(), 5, 5);
                     } else {
-                        hero.getValue().removeBullet(bullet);
+                        hero.removeBullet(bullet);
                     }
                 }
             }
         }
+//        for (Map.Entry<Integer, Hero> hero : heros.entrySet()) {
+//            if (hero.getValue().isLive()) {
+//                drawTank(hero.getValue(), g, hero.getKey());
+//            } else {
+//                heros.remove(hero.getKey());
+//            }
+//            if (hero.getValue() != null && !hero.getValue().getBullets().isEmpty()) {
+//                Vector<Bullet> bullets = hero.getValue().getBullets();
+//                for (int i = 0; i < bullets.size(); i++) {
+//                    Bullet bullet = bullets.get(i);
+//                    bullet.setSpeed(10);
+//                    if (bullet.isLive()) {
+//                        g.fillOval(bullet.getX(), bullet.getY(), 5, 5);
+//                    } else {
+//                        hero.getValue().removeBullet(bullet);
+//                    }
+//                }
+//            }
+//        }
 
         //画出坦克爆炸效果
-        for(int num = 0; num < explosions.size(); num++) {
+        for (int num = 0; num < explosions.size(); num++) {
             Explosion explosion = explosions.get(num);
 
             int number = explosion.getLifeTime();
             g.drawImage(boomPart2, explosion.getX(), explosion.getY(), 60, 60, this);
 
-            if(number > 6) {
+            if (number > 6) {
                 g.drawImage(boomPart3, explosion.getX(), explosion.getY(), 60, 60, this);
-            } else if(number > 3) {
+            } else if (number > 3) {
                 g.drawImage(boomPart2, explosion.getX(), explosion.getY(), 60, 60, this);
-            } else if(number > 0) {
+            } else if (number > 0) {
                 g.drawImage(boomPart1, explosion.getX(), explosion.getY(), 60, 60, this);
             }
 
             //减少爆炸生命周期
             explosion.blowUp();
 
-            if(explosion.isLive() == false) {
+            if (explosion.isLive() == false) {
                 explosions.remove(explosion);
             }
         }
@@ -129,20 +151,21 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
         //画出敌人坦克
         for (int num = 0; num < enemies.size(); num++) {
             Enemy enemy = enemies.get(num);
-            if(enemy.isLive()) {
+            if (enemy.isLive()) {
                 drawTank(enemy, g, 3);
             }
-//            if(enemy.getBullets().size() > 0){
-//                Vector<Bullet> bullets = enemy.getBullets();
-//                for (int i = 0; i < bullets.size(); i++) {
-//                    Bullet bullet = bullets.get(i);
-//                    if(bullet.isLive()) {
-//                        g.fillOval(bullet.getX(), bullet.getY(), 5, 5);
-//                    } else {
-//                        enemy.removeBullet(bullet);
-//                    }
-//                }
-//            }
+            if (enemy.getBullets().size() > 0) {
+                g.setColor(Color.white);
+                Vector<Bullet> bullets = enemy.getBullets();
+                for (int i = 0; i < bullets.size(); i++) {
+                    Bullet bullet = bullets.get(i);
+                    if (bullet.isLive()) {
+                        g.fillOval(bullet.getX(), bullet.getY(), 5, 5);
+                    } else {
+                        enemy.removeBullet(bullet);
+                    }
+                }
+            }
         }
     }
 
@@ -303,22 +326,176 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
     }
 
     /**
-     * 攻击到坦克
+     * 子弹攻击到坦克
+     *
      * @param bullet
      * @param enemy
      */
-    public void hitTank(Bullet bullet, Enemy enemy) {
-        Hashtable<String, Integer> tankArea = enemy.getTankArea();
-        if(enemy.isLive() && bullet.getX() > tankArea.get("minX")
+    public void hitTank(Bullet bullet, TankModel tank) {
+        Hashtable<String, Integer> tankArea = tank.getTankArea();
+        if (tank.isLive() && bullet.getX() > tankArea.get("minX")
                 && bullet.getX() < tankArea.get("maxX")
                 && bullet.getY() > tankArea.get("minY")
                 && bullet.getY() < tankArea.get("maxY")
         ) {
             Explosion explosion = new Explosion(tankArea.get("minX"), tankArea.get("minY"));
-            System.out.println("add" + explosion.getLifeTime());
             explosions.add(explosion);
             bullet.setLive(false);
-            enemy.setLive(false);
+            tank.setLive(false);
+        }
+    }
+
+    /**
+     * 碰撞坦克
+     *
+     * @param hero
+     * @param enemy
+     */
+    public void collideTank(Hero hero, Enemy enemy) {
+        Hashtable<String, Integer> enemyArea = enemy.getTankArea();
+        Hashtable<String, Integer> heroArea = hero.getTankArea();
+        if (hero.isLive() && enemy.isLive()) {
+            switch (hero.getDirect()) {
+                case 0:
+                    if (((heroArea.get("minX") > enemyArea.get("minX")
+                            && heroArea.get("minX") < enemyArea.get("maxX"))
+                            || (heroArea.get("maxX") > enemyArea.get("minX")
+                            && heroArea.get("maxX") < enemyArea.get("maxX")))
+                            && heroArea.get("minY") > enemyArea.get("minY")
+                            && heroArea.get("minY") < enemyArea.get("maxY")
+                    ) {
+                        Explosion enemyExplosion = new Explosion(enemyArea.get("minX"), enemyArea.get("minY"));
+                        Explosion heroExplosion = new Explosion(heroArea.get("minX"), heroArea.get("minY"));
+                        explosions.add(enemyExplosion);
+                        explosions.add(heroExplosion);
+                        hero.setLive(false);
+                        enemy.setLive(false);
+                    }
+                    break;
+                case 1:
+                    if (((heroArea.get("minY") > enemyArea.get("minY")
+                            && heroArea.get("minY") < enemyArea.get("maxY"))
+                            || (heroArea.get("maxY") > enemyArea.get("minY")
+                            && heroArea.get("maxY") < enemyArea.get("maxY")))
+                            && heroArea.get("maxX") > enemyArea.get("minX")
+                            && heroArea.get("maxX") < enemyArea.get("maxX")
+                    ) {
+                        Explosion enemyExplosion = new Explosion(enemyArea.get("minX"), enemyArea.get("minY"));
+                        Explosion heroExplosion = new Explosion(heroArea.get("minX"), heroArea.get("minY"));
+                        explosions.add(enemyExplosion);
+                        explosions.add(heroExplosion);
+                        hero.setLive(false);
+                        enemy.setLive(false);
+                    }
+                    break;
+                case 2:
+                    if (((heroArea.get("minX") > enemyArea.get("minX")
+                            && heroArea.get("minX") < enemyArea.get("maxX"))
+                            || (heroArea.get("maxX") > enemyArea.get("minX")
+                            && heroArea.get("maxX") < enemyArea.get("maxX")))
+                            && heroArea.get("maxY") > enemyArea.get("minY")
+                            && heroArea.get("maxY") < enemyArea.get("maxY")
+                    ) {
+                        Explosion enemyExplosion = new Explosion(enemyArea.get("minX"), enemyArea.get("minY"));
+                        Explosion heroExplosion = new Explosion(heroArea.get("minX"), heroArea.get("minY"));
+                        explosions.add(enemyExplosion);
+                        explosions.add(heroExplosion);
+                        hero.setLive(false);
+                        enemy.setLive(false);
+                    }
+                    break;
+                case 3:
+                    if (((heroArea.get("minY") > enemyArea.get("minY")
+                            && heroArea.get("minY") < enemyArea.get("maxY"))
+                            || (heroArea.get("maxY") > enemyArea.get("minY")
+                            && heroArea.get("maxY") < enemyArea.get("maxY")))
+                            && heroArea.get("minX") > enemyArea.get("minX")
+                            && heroArea.get("minX") < enemyArea.get("maxX")
+                    ) {
+                        Explosion enemyExplosion = new Explosion(enemyArea.get("minX"), enemyArea.get("minY"));
+                        Explosion heroExplosion = new Explosion(heroArea.get("minX"), heroArea.get("minY"));
+                        explosions.add(enemyExplosion);
+                        explosions.add(heroExplosion);
+                        hero.setLive(false);
+                        enemy.setLive(false);
+                    }
+                    break;
+            }
+        }
+    }
+
+    /**
+     * 碰撞坦克(敌方)
+     *
+     * @param enemy
+     * @param enemy
+     */
+    public void collideEnemies(Enemy enemy1, Enemy enemy2) {
+        Hashtable<String, Integer> enemy1Area = enemy1.getTankArea();
+        Hashtable<String, Integer> enemy2Area = enemy2.getTankArea();
+        if (enemy1.isLive() && enemy2.isLive()) {
+            switch (enemy1.getDirect()) {
+                case 0:
+                    if (((enemy1Area.get("minX") > enemy2Area.get("minX")
+                            && enemy1Area.get("minX") < enemy2Area.get("maxX"))
+                            || (enemy1Area.get("maxX") > enemy2Area.get("minX")
+                            && enemy1Area.get("maxX") < enemy2Area.get("maxX")))
+                            && enemy1Area.get("minY") > enemy2Area.get("minY")
+                            && enemy1Area.get("minY") < enemy2Area.get("maxY")
+                    ) {
+                        //敌方坦克互相碰撞发生方向改变
+                        enemy1.setDirect((int)(Math.random() * 4));
+                        if(enemy2.getDirect() == 2) {
+                            enemy1.setDirect((int)(Math.random() * 4));
+                        }
+                    }
+                    break;
+                case 1:
+                    if (((enemy1Area.get("minY") > enemy2Area.get("minY")
+                            && enemy1Area.get("minY") < enemy2Area.get("maxY"))
+                            || (enemy1Area.get("maxY") > enemy2Area.get("minY")
+                            && enemy1Area.get("maxY") < enemy2Area.get("maxY")))
+                            && enemy1Area.get("maxX") > enemy2Area.get("minX")
+                            && enemy1Area.get("maxX") < enemy2Area.get("maxX")
+                    ) {
+                        //敌方坦克互相碰撞发生方向改变
+                        enemy1.setDirect((int)(Math.random() * 4));
+                        if(enemy2.getDirect() == 3) {
+                            enemy1.setDirect((int)(Math.random() * 4));
+                        }
+                    }
+                    break;
+                case 2:
+                    if (((enemy1Area.get("minX") > enemy2Area.get("minX")
+                            && enemy1Area.get("minX") < enemy2Area.get("maxX"))
+                            || (enemy1Area.get("maxX") > enemy2Area.get("minX")
+                            && enemy1Area.get("maxX") < enemy2Area.get("maxX")))
+                            && enemy1Area.get("maxY") > enemy2Area.get("minY")
+                            && enemy1Area.get("maxY") < enemy2Area.get("maxY")
+                    ) {
+                        //敌方坦克互相碰撞发生方向改变
+                        enemy1.setDirect((int)(Math.random() * 4));
+                        if(enemy2.getDirect() == 0) {
+                            enemy1.setDirect((int)(Math.random() * 4));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (((enemy1Area.get("minY") > enemy2Area.get("minY")
+                            && enemy1Area.get("minY") < enemy2Area.get("maxY"))
+                            || (enemy1Area.get("maxY") > enemy2Area.get("minY")
+                            && enemy1Area.get("maxY") < enemy2Area.get("maxY")))
+                            && enemy1Area.get("minX") > enemy2Area.get("minX")
+                            && enemy1Area.get("minX") < enemy2Area.get("maxX")
+                    ) {
+                        //敌方坦克互相碰撞发生方向改变
+                        enemy1.setDirect((int)(Math.random() * 4));
+                        if(enemy2.getDirect() == 1) {
+                            enemy1.setDirect((int)(Math.random() * 4));
+                        }
+                    }
+                    break;
+            }
         }
     }
 
@@ -331,19 +508,25 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_W:
-                heros.get(1).moveUp();
+                if (heros.containsKey(1)) heros.get(1).moveUp();
                 break;
             case KeyEvent.VK_S:
-                heros.get(1).moveDown();
+                if (heros.containsKey(1)) heros.get(1).moveDown();
                 break;
             case KeyEvent.VK_A:
-                heros.get(1).moveLeft();
+                if (heros.containsKey(1)) heros.get(1).moveLeft();
                 break;
             case KeyEvent.VK_D:
-                heros.get(1).moveRight();
+                if (heros.containsKey(1)) heros.get(1).moveRight();
                 break;
             case KeyEvent.VK_1:
-                if (!heros.containsKey(2)) heros.put(2, new Hero(drawWidth / 2, drawHeight - 100));
+                if (!heros.containsKey(2)) {
+                    heros.put(2, new Hero(drawWidth / 2, drawHeight - 100));
+                } else if(heros.get(2).isLive() == false) {
+                    heros.get(2).setLive(true);
+                    heros.get(2).setX(drawWidth / 2);
+                    heros.get(2).setY(drawHeight - 100);
+                }
                 break;
             case KeyEvent.VK_UP:
                 if (heros.containsKey(2)) heros.get(2).moveUp();
@@ -374,7 +557,7 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
 
     @Override
     public void run() { //每隔100毫秒，重绘区域，刷新绘图区域，子弹就移动
-        while(true) {
+        while (true) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -382,13 +565,32 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
             }
 
             //判断坦克是否被击中
-            for(Hero hero:heros.values()) {
-                if(hero.getBullets().size() > 0) {
-                    for(int i = 0; i < enemies.size(); i++) {
-                        for(Bullet bullet:hero.getBullets()) {
+            for (Hero hero : heros.values()) {
+                for (int i = 0; i < enemies.size(); i++) {
+                    //判断地方坦克是否被击中
+                    if (hero.getBullets().size() > 0) {
+                        for (Bullet bullet : hero.getBullets()) {
                             hitTank(bullet, enemies.get(i));
                         }
                     }
+
+                    //判断我方坦克是否被击中
+                    if(enemies.get(i).getBullets().size() > 0) {
+                        for(int j = 0; j < enemies.get(i).getBullets().size(); j++) {
+                            Bullet enemyBullet = enemies.get(i).getBullets().get(j);
+                            hitTank(enemyBullet, hero);
+                        }
+                    }
+                }
+                for (int i = 0; i < enemies.size(); i++) {
+                    collideTank(hero, enemies.get(i));
+                }
+            }
+
+            //敌方坦克互相碰撞效果
+            for (int i = 0; i < enemies.size(); i++) {
+                for (int j = 0; j < enemies.size(); j++) {
+                    collideEnemies(enemies.get(i), enemies.get(j));
                 }
             }
 

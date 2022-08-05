@@ -1,7 +1,5 @@
 package com.tank_game.model;
 
-import com.tank_game.model.TankModel;
-
 /**
  * @author zhouxufeng
  * @version 1.0
