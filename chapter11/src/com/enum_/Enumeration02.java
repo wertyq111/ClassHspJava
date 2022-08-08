@@ -45,9 +45,6 @@ enum Season2 {
 
     @Override
     public String toString() {
-        return "Season{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+        return name;
     }
 }
