@@ -2,7 +2,6 @@ package com.file;
 
 import com.enum_.FileEnum;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
