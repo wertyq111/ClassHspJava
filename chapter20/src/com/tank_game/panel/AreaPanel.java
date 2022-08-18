@@ -19,10 +19,11 @@ import java.util.Vector;
 public class AreaPanel extends JPanel implements KeyListener, Runnable {
     private Hashtable<Integer, Hero> heros = new Hashtable<>(); //正义坦克
     private Vector<Enemy> enemies = new Vector<>(); //敌人坦克
+    private Vector<TankModel> tanks = new Vector<>(); //敌人坦克
     private Vector<Explosion> explosions = new Vector<>(); //爆炸现象
     private int drawWidth;
     private int drawHeight;
-    private int enemiesSize = 4;
+    private int enemiesSize = 6;
     private Image boomPart1 = null;
     private Image boomPart2 = null;
     private Image boomPart3 = null;
@@ -35,6 +36,8 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
         for (int i = 0; i < enemiesSize; i++) {
             Enemy enemy = new Enemy((drawWidth / enemiesSize) + ((i + 1) * (drawWidth / 10)), 0, 2);
             enemies.add(enemy);
+            tanks.add(enemy);
+            enemy.setTanks(tanks);
             new Thread(enemy).start();
         }
 
@@ -424,81 +427,6 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
         }
     }
 
-    /**
-     * 碰撞坦克(敌方)
-     *
-     * @param enemy
-     * @param enemy
-     */
-    public void collideEnemies(Enemy enemy1, Enemy enemy2) {
-        Hashtable<String, Integer> enemy1Area = enemy1.getTankArea();
-        Hashtable<String, Integer> enemy2Area = enemy2.getTankArea();
-        if (enemy1.isLive() && enemy2.isLive()) {
-            switch (enemy1.getDirect()) {
-                case 0:
-                    if (((enemy1Area.get("minX") > enemy2Area.get("minX")
-                            && enemy1Area.get("minX") < enemy2Area.get("maxX"))
-                            || (enemy1Area.get("maxX") > enemy2Area.get("minX")
-                            && enemy1Area.get("maxX") < enemy2Area.get("maxX")))
-                            && enemy1Area.get("minY") > enemy2Area.get("minY")
-                            && enemy1Area.get("minY") < enemy2Area.get("maxY")
-                    ) {
-                        //敌方坦克互相碰撞发生方向改变
-                        enemy1.setDirect((int)(Math.random() * 4));
-                        if(enemy2.getDirect() == 2) {
-                            enemy1.setDirect((int)(Math.random() * 4));
-                        }
-                    }
-                    break;
-                case 1:
-                    if (((enemy1Area.get("minY") > enemy2Area.get("minY")
-                            && enemy1Area.get("minY") < enemy2Area.get("maxY"))
-                            || (enemy1Area.get("maxY") > enemy2Area.get("minY")
-                            && enemy1Area.get("maxY") < enemy2Area.get("maxY")))
-                            && enemy1Area.get("maxX") > enemy2Area.get("minX")
-                            && enemy1Area.get("maxX") < enemy2Area.get("maxX")
-                    ) {
-                        //敌方坦克互相碰撞发生方向改变
-                        enemy1.setDirect((int)(Math.random() * 4));
-                        if(enemy2.getDirect() == 3) {
-                            enemy1.setDirect((int)(Math.random() * 4));
-                        }
-                    }
-                    break;
-                case 2:
-                    if (((enemy1Area.get("minX") > enemy2Area.get("minX")
-                            && enemy1Area.get("minX") < enemy2Area.get("maxX"))
-                            || (enemy1Area.get("maxX") > enemy2Area.get("minX")
-                            && enemy1Area.get("maxX") < enemy2Area.get("maxX")))
-                            && enemy1Area.get("maxY") > enemy2Area.get("minY")
-                            && enemy1Area.get("maxY") < enemy2Area.get("maxY")
-                    ) {
-                        //敌方坦克互相碰撞发生方向改变
-                        enemy1.setDirect((int)(Math.random() * 4));
-                        if(enemy2.getDirect() == 0) {
-                            enemy1.setDirect((int)(Math.random() * 4));
-                        }
-                    }
-                    break;
-                case 3:
-                    if (((enemy1Area.get("minY") > enemy2Area.get("minY")
-                            && enemy1Area.get("minY") < enemy2Area.get("maxY"))
-                            || (enemy1Area.get("maxY") > enemy2Area.get("minY")
-                            && enemy1Area.get("maxY") < enemy2Area.get("maxY")))
-                            && enemy1Area.get("minX") > enemy2Area.get("minX")
-                            && enemy1Area.get("minX") < enemy2Area.get("maxX")
-                    ) {
-                        //敌方坦克互相碰撞发生方向改变
-                        enemy1.setDirect((int)(Math.random() * 4));
-                        if(enemy2.getDirect() == 1) {
-                            enemy1.setDirect((int)(Math.random() * 4));
-                        }
-                    }
-                    break;
-            }
-        }
-    }
-
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -584,13 +512,6 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
                 }
                 for (int i = 0; i < enemies.size(); i++) {
                     collideTank(hero, enemies.get(i));
-                }
-            }
-
-            //敌方坦克互相碰撞效果
-            for (int i = 0; i < enemies.size(); i++) {
-                for (int j = 0; j < enemies.size(); j++) {
-                    collideEnemies(enemies.get(i), enemies.get(j));
                 }
             }
 
