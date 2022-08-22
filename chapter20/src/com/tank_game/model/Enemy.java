@@ -77,6 +77,14 @@ public class Enemy extends TankModel implements Runnable {
     }
 
     @Override
+    public void setLive(boolean live) {
+       super.setLive(live);
+       if(live == false) {
+           Recorder.addAllEnemyTankNum();
+       }
+    }
+
+    @Override
     public void run() {
         Random random = new Random();
         int fireNum = random.nextInt(500);

@@ -1,8 +1,12 @@
 package com.tank_game;
 
+import com.tank_game.model.Recorder;
 import com.tank_game.panel.AreaPanel;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 /**
  * @author zhouxufeng
@@ -13,7 +17,7 @@ public class TankGame01 extends JFrame {
     private AreaPanel ap = null;
 
     public TankGame01() {
-        ap = new AreaPanel(1024, 750);
+        ap = new AreaPanel(1324, 750);
         //将ap 放入到Thread并启动
         Thread thread = new Thread(ap);
         thread.start();
@@ -22,6 +26,21 @@ public class TankGame01 extends JFrame {
         this.addKeyListener(ap);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
+
+        //监听窗口关闭事件，保存击坠数
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    System.out.println("关闭窗口");
+                    System.out.println(Recorder.getAllEnemyTankNum());
+                    Recorder.keepAllEnemyTankNum();
+                    System.exit(0);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {

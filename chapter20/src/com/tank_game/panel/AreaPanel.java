@@ -23,7 +23,7 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
     private Vector<Explosion> explosions = new Vector<>(); //爆炸现象
     private int drawWidth;
     private int drawHeight;
-    private int enemiesSize = 6;
+    private int enemiesSize = 5 - Recorder.syschronizedEnemyTankNum();
     private Image boomPart1 = null;
     private Image boomPart2 = null;
     private Image boomPart3 = null;
@@ -34,7 +34,7 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
         heros.put(1, new Hero(drawWidth / 3, drawHeight - (drawWidth / 10)));
 
         for (int i = 0; i < enemiesSize; i++) {
-            Enemy enemy = new Enemy((drawWidth / enemiesSize) + ((i + 1) * (drawWidth / 10)), 0, 2);
+            Enemy enemy = new Enemy((i + 100) + ((i + 1) * (drawWidth / 10)), 0, 2);
             enemies.add(enemy);
             tanks.add(enemy);
             enemy.setTanks(tanks);
@@ -80,6 +80,21 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
         this.drawHeight = drawHeight;
     }
 
+    //记录我方击坠地方坦克数量
+    public void showInfo(Graphics g) {
+        //画出玩家的总成绩
+        g.setColor(Color.BLACK);
+        Font font = new Font("宋体", Font.BOLD, 25);
+        g.setFont(font);
+
+        g.drawString("您累计击毁地方坦克", 1060, 30);
+
+        drawTank(new Enemy(1060, 60, 0), g, 3);
+        g.setColor(Color.BLACK);
+        g.drawString("X", 1130, 95);
+        g.drawString(Recorder.getAllEnemyTankNum() + "", 1150, 95);
+    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -87,6 +102,7 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 1024, 1024);
         g.drawImage(boomPart3, 0, 0, 0, 0, this);
+        showInfo(g);
 
 
         //画出正义坦克
@@ -189,7 +205,7 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
                 g.setColor(Color.yellow);
                 break;
             case 3: //敌人坦克
-                g.setColor(Color.white);
+                g.setColor(Color.PINK);
                 break;
         }
 
