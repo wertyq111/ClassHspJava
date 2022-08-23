@@ -31,6 +31,7 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
     public AreaPanel(int drawWidth, int drawHeight) {
         this.drawWidth = drawWidth;
         this.drawHeight = drawHeight;
+        System.out.println(Recorder.getEnemies().size());
         heros.put(1, new Hero(drawWidth / 3, drawHeight - (drawWidth / 10)));
 
         for (int i = 0; i < enemiesSize; i++) {
@@ -46,6 +47,8 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
         boomPart3 = Toolkit.getDefaultToolkit().getImage("./img/boom_part3.png");
         explosions.add(new Explosion(-60, -60));
 
+        //我方和敌方坦克合集保存到记录文件中
+        Recorder.setEnemies(enemies);
     }
 
     public Hashtable<Integer, Hero> getHeros() {

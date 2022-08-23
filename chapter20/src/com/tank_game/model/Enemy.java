@@ -2,6 +2,7 @@ package com.tank_game.model;
 
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.Vector;
@@ -12,7 +13,9 @@ import java.util.Vector;
  * 坦克: 敌人
  */
 @SuppressWarnings({"all"})
-public class Enemy extends TankModel implements Runnable {
+public class Enemy extends TankModel implements Runnable, Serializable {
+    //serialVersionUID 序列化的版本号， 可以提高兼容性
+    private static final long serialVersionUID = 238129324829381231L;
     private Vector<Bullet> bullets = new Vector<>();
     public Enemy(int x, int y, int direct) {
         super(x, y, direct);

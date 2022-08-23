@@ -53,6 +53,5 @@ public class Properties01 {
         properties1.store(new FileOutputStream(configDir + "mysql2.properties"), null);
         System.out.println("==========");
         System.out.println("保存配置文件成功");
-
     }
 }

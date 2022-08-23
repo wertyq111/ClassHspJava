@@ -1,5 +1,6 @@
 package com.tank_game.model;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -9,7 +10,7 @@ import java.util.Vector;
  * 坦克: 正义
  */
 @SuppressWarnings({"all"})
-public class Hero extends TankModel {
+public class Hero extends TankModel implements Serializable {
     //定义一个Bullet对象， 表示一个发射子弹(线程)
     private Vector<Bullet> bullets = new Vector<>();
     public Hero(int x, int y) {
