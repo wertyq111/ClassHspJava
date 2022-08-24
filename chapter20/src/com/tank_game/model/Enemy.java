@@ -2,10 +2,8 @@ package com.tank_game.model;
 
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 
-import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Random;
-import java.util.Vector;
 
 /**
  * @author zhouxufeng
@@ -13,10 +11,7 @@ import java.util.Vector;
  * 坦克: 敌人
  */
 @SuppressWarnings({"all"})
-public class Enemy extends TankModel implements Runnable, Serializable {
-    //serialVersionUID 序列化的版本号， 可以提高兼容性
-    private static final long serialVersionUID = 238129324829381231L;
-    private Vector<Bullet> bullets = new Vector<>();
+public class Enemy extends TankModel implements Runnable {
     public Enemy(int x, int y, int direct) {
         super(x, y, direct);
     }
@@ -25,7 +20,7 @@ public class Enemy extends TankModel implements Runnable, Serializable {
         //根据当前坦克位置获取字段坐标
         Hashtable<Character, Integer> bulletCoordinate = getBulletCoordinate();
         Bullet bullet = new Bullet(bulletCoordinate.get('x'), bulletCoordinate.get('y'), getDirect());
-        bullets.add(bullet);
+        addBullet(bullet);
         if(isLive() == false) {
             bullet.setLive(false);
         }
@@ -46,37 +41,17 @@ public class Enemy extends TankModel implements Runnable, Serializable {
         switch(getDirect()) {
             case 0:
                 moveUp();
-                if(getX() <= 0) {
-                    setDirect((int)(Math.random() * 4));
-                }
                 break;
             case 1:
                 moveRight();
-                if(getY() >= (1024 - getTrackHeight())) {
-                    setDirect((int)(Math.random() * 4));
-                }
                 break;
             case 2:
                 moveDown();
-                if(getX() >= (750 - getTrackHeight())) {
-                    setDirect((int)(Math.random() * 4));
-                }
                 break;
             case 3:
                 moveLeft();
-                if(getY() <= 0) {
-                    setDirect((int)(Math.random() * 4));
-                }
                 break;
         }
-    }
-
-    public Vector<Bullet> getBullets() {
-        return bullets;
-    }
-
-    public void removeBullet(Bullet bullet) {
-        bullets.remove(bullet);
     }
 
     @Override

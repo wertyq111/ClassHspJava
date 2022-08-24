@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * @author zhouxufeng
@@ -17,7 +18,10 @@ public class TankGame01 extends JFrame {
     private AreaPanel ap = null;
 
     public TankGame01() {
-        ap = new AreaPanel(1324, 750);
+        System.out.println("请输入: 1. 新游戏， 2. 继续游戏");
+        Scanner scanner = new Scanner(System.in);
+        int key = scanner.nextInt();
+        ap = new AreaPanel(1324, 750, key);
         //将ap 放入到Thread并启动
         Thread thread = new Thread(ap);
         thread.start();

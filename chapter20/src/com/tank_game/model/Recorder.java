@@ -2,7 +2,6 @@ package com.tank_game.model;
 
 import java.io.*;
 import java.util.Hashtable;
-import java.util.Properties;
 import java.util.Vector;
 
 /**
@@ -14,6 +13,7 @@ import java.util.Vector;
 public class Recorder {
     //定义变量， 记录我方击坠敌人坦克数, 敌方坦克信息, 我方坦克信息
     public static int allEnemyTankNum = 0;
+    public static Vector<Hero> heros = new Vector<>();
     public static Vector<Enemy> enemies = new Vector<>();
     //定义IO处理流
     public static BufferedWriter bw = null;
@@ -31,30 +31,51 @@ public class Recorder {
         Recorder.allEnemyTankNum = allEnemyTankNum;
     }
 
+    public static Vector<Hero> getHeros() {
+        return heros;
+    }
+
     public static Vector<Enemy> getEnemies() {
         return enemies;
+    }
+
+    public static void setHeros(Vector<Hero> heros) {
+        Recorder.heros = heros;
     }
 
     public static void setEnemies(Vector<Enemy> enemies) {
         Recorder.enemies = enemies;
     }
 
-    //更新之前记录的敌人坦克数
-    public static int syschronizedEnemyTankNum() {
+    //读取记录
+    public static void readRecord() {
         File recordFile = new File(recordFilePath);
         if(recordFile.exists()) {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(recordFile));
                 int enemyTankNum = ois.readInt();
-                //Vector lastEnemies = (Vector) ois.readObject();
+                int herosNum = ois.readInt();
+                int enemiesNum = ois.readInt();
+
                 allEnemyTankNum = enemyTankNum;
-                return allEnemyTankNum;
+
+                for(int i = 0; i < herosNum; i++) {
+                    Hero hero = (Hero) ois.readObject();
+                    hero.clearBullet();
+                    heros.add(hero);
+                }
+
+                for(int i = 0; i < enemiesNum; i++) {
+                    Enemy enemy = (Enemy) ois.readObject();
+                    enemy.clearBullet();
+                    enemies.add(enemy);
+                }
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
-
-        return 0;
     }
 
     //增加击坠数量
@@ -66,8 +87,18 @@ public class Recorder {
     public static void keepAllEnemyTankNum() throws IOException {
         ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(recordFilePath));
         oos.writeInt(allEnemyTankNum);
-        //oos.writeObject(heros);
-        //oos.writeObject(enemies);
+        //保存坦克数量
+        oos.writeInt(heros.size());
+        oos.writeInt(enemies.size());
+        //保存我方坦克信息
+        for(Hero hero:heros) {
+            oos.writeObject(hero);
+        }
+
+        //保存敌方坦克信息
+        for(Enemy enemy:enemies) {
+            oos.writeObject(enemy);
+        }
         oos.close();
     }
 }

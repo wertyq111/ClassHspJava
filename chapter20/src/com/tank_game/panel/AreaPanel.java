@@ -17,29 +17,64 @@ import java.util.Vector;
 @SuppressWarnings({"all"})
 //为了让Areapanel 不停的重绘子弹，
 public class AreaPanel extends JPanel implements KeyListener, Runnable {
-    private Hashtable<Integer, Hero> heros = new Hashtable<>(); //正义坦克
+    private Vector<Hero> heros = new Vector<>(); //正义坦克
     private Vector<Enemy> enemies = new Vector<>(); //敌人坦克
     private Vector<TankModel> tanks = new Vector<>(); //敌人坦克
     private Vector<Explosion> explosions = new Vector<>(); //爆炸现象
+    private Hero hero1 = null;
+    private Hero hero2 = null;
     private int drawWidth;
     private int drawHeight;
-    private int enemiesSize = 5 - Recorder.syschronizedEnemyTankNum();
+    private int enemiesSize = 5;
     private Image boomPart1 = null;
     private Image boomPart2 = null;
     private Image boomPart3 = null;
 
-    public AreaPanel(int drawWidth, int drawHeight) {
+    public AreaPanel(int drawWidth, int drawHeight, int key) {
+        switch(key) {
+            case 1:
+                break;
+            case 2:
+                Recorder.readRecord();
+                enemiesSize -= Recorder.getAllEnemyTankNum();
+                break;
+            default:
+                System.out.println("指令错误，开始新游戏");
+        }
         this.drawWidth = drawWidth;
         this.drawHeight = drawHeight;
-        System.out.println(Recorder.getEnemies().size());
-        heros.put(1, new Hero(drawWidth / 3, drawHeight - (drawWidth / 10)));
+        if(Recorder.getHeros().size() > 0) {
+            heros = Recorder.getHeros();
+            for(Hero hero:heros) {
+                switch (hero.getRole()) {
+                    case "p1":
+                        hero1 = hero;
+                        break;
+                    case "p2":
+                        hero2 = hero;
+                        break;
+                }
+            }
+        } else {
+            hero1 = new Hero(drawWidth / 3, drawHeight - (drawWidth / 10), "p1");
+            heros.add(hero1);
+            tanks.add(hero1);
+            hero1.setTanks(tanks);
+        }
 
-        for (int i = 0; i < enemiesSize; i++) {
-            Enemy enemy = new Enemy((i + 100) + ((i + 1) * (drawWidth / 10)), 0, 2);
-            enemies.add(enemy);
-            tanks.add(enemy);
-            enemy.setTanks(tanks);
-            new Thread(enemy).start();
+        if(Recorder.getEnemies().size() > 0) {
+            enemies = Recorder.getEnemies();
+            for(Enemy enemy:enemies) {
+                new Thread(enemy).start();
+            }
+        } else {
+            for (int i = 0; i < enemiesSize; i++) {
+                Enemy enemy = new Enemy((i + 100) + ((i + 1) * (drawWidth / 10)), 0, 2);
+                enemies.add(enemy);
+                tanks.add(enemy);
+                enemy.setTanks(tanks);
+                new Thread(enemy).start();
+            }
         }
 
         boomPart1 = Toolkit.getDefaultToolkit().getImage("./img/boom_part1.png");
@@ -48,14 +83,15 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
         explosions.add(new Explosion(-60, -60));
 
         //我方和敌方坦克合集保存到记录文件中
+        Recorder.setHeros(heros);
         Recorder.setEnemies(enemies);
     }
 
-    public Hashtable<Integer, Hero> getHeros() {
+    public Vector<Hero> getHeros() {
         return heros;
     }
 
-    public void setHeros(Hashtable<Integer, Hero> heros) {
+    public void setHeros(Vector<Hero> heros) {
         this.heros = heros;
     }
 
@@ -109,10 +145,11 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
 
 
         //画出正义坦克
-        for(int i = 1; i <= heros.size(); i++) {
+        for(int i = 0; i < heros.size(); i++) {
             Hero hero = heros.get(i);
+
             if (hero.isLive()) {
-                drawTank(hero, g, i);
+                drawTank(hero, g, i + 1);
             }
             if (hero != null && !hero.getBullets().isEmpty()) {
                 Vector<Bullet> bullets = hero.getBullets();
@@ -367,85 +404,6 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
         }
     }
 
-    /**
-     * 碰撞坦克
-     *
-     * @param hero
-     * @param enemy
-     */
-    public void collideTank(Hero hero, Enemy enemy) {
-        Hashtable<String, Integer> enemyArea = enemy.getTankArea();
-        Hashtable<String, Integer> heroArea = hero.getTankArea();
-        if (hero.isLive() && enemy.isLive()) {
-            switch (hero.getDirect()) {
-                case 0:
-                    if (((heroArea.get("minX") > enemyArea.get("minX")
-                            && heroArea.get("minX") < enemyArea.get("maxX"))
-                            || (heroArea.get("maxX") > enemyArea.get("minX")
-                            && heroArea.get("maxX") < enemyArea.get("maxX")))
-                            && heroArea.get("minY") > enemyArea.get("minY")
-                            && heroArea.get("minY") < enemyArea.get("maxY")
-                    ) {
-                        Explosion enemyExplosion = new Explosion(enemyArea.get("minX"), enemyArea.get("minY"));
-                        Explosion heroExplosion = new Explosion(heroArea.get("minX"), heroArea.get("minY"));
-                        explosions.add(enemyExplosion);
-                        explosions.add(heroExplosion);
-                        hero.setLive(false);
-                        enemy.setLive(false);
-                    }
-                    break;
-                case 1:
-                    if (((heroArea.get("minY") > enemyArea.get("minY")
-                            && heroArea.get("minY") < enemyArea.get("maxY"))
-                            || (heroArea.get("maxY") > enemyArea.get("minY")
-                            && heroArea.get("maxY") < enemyArea.get("maxY")))
-                            && heroArea.get("maxX") > enemyArea.get("minX")
-                            && heroArea.get("maxX") < enemyArea.get("maxX")
-                    ) {
-                        Explosion enemyExplosion = new Explosion(enemyArea.get("minX"), enemyArea.get("minY"));
-                        Explosion heroExplosion = new Explosion(heroArea.get("minX"), heroArea.get("minY"));
-                        explosions.add(enemyExplosion);
-                        explosions.add(heroExplosion);
-                        hero.setLive(false);
-                        enemy.setLive(false);
-                    }
-                    break;
-                case 2:
-                    if (((heroArea.get("minX") > enemyArea.get("minX")
-                            && heroArea.get("minX") < enemyArea.get("maxX"))
-                            || (heroArea.get("maxX") > enemyArea.get("minX")
-                            && heroArea.get("maxX") < enemyArea.get("maxX")))
-                            && heroArea.get("maxY") > enemyArea.get("minY")
-                            && heroArea.get("maxY") < enemyArea.get("maxY")
-                    ) {
-                        Explosion enemyExplosion = new Explosion(enemyArea.get("minX"), enemyArea.get("minY"));
-                        Explosion heroExplosion = new Explosion(heroArea.get("minX"), heroArea.get("minY"));
-                        explosions.add(enemyExplosion);
-                        explosions.add(heroExplosion);
-                        hero.setLive(false);
-                        enemy.setLive(false);
-                    }
-                    break;
-                case 3:
-                    if (((heroArea.get("minY") > enemyArea.get("minY")
-                            && heroArea.get("minY") < enemyArea.get("maxY"))
-                            || (heroArea.get("maxY") > enemyArea.get("minY")
-                            && heroArea.get("maxY") < enemyArea.get("maxY")))
-                            && heroArea.get("minX") > enemyArea.get("minX")
-                            && heroArea.get("minX") < enemyArea.get("maxX")
-                    ) {
-                        Explosion enemyExplosion = new Explosion(enemyArea.get("minX"), enemyArea.get("minY"));
-                        Explosion heroExplosion = new Explosion(heroArea.get("minX"), heroArea.get("minY"));
-                        explosions.add(enemyExplosion);
-                        explosions.add(heroExplosion);
-                        hero.setLive(false);
-                        enemy.setLive(false);
-                    }
-                    break;
-            }
-        }
-    }
-
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -455,41 +413,43 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_W:
-                if (heros.containsKey(1)) heros.get(1).moveUp();
+                if (hero1 != null) hero1.moveUp();
                 break;
             case KeyEvent.VK_S:
-                if (heros.containsKey(1)) heros.get(1).moveDown();
+                if (hero1 != null) hero1.moveDown();
                 break;
             case KeyEvent.VK_A:
-                if (heros.containsKey(1)) heros.get(1).moveLeft();
+                if (hero1 != null) hero1.moveLeft();
                 break;
             case KeyEvent.VK_D:
-                if (heros.containsKey(1)) heros.get(1).moveRight();
+                if (hero1 != null) hero1.moveRight();
                 break;
             case KeyEvent.VK_1:
-                if (!heros.containsKey(2)) {
-                    heros.put(2, new Hero(drawWidth / 2, drawHeight - 100));
-                } else if(heros.get(2).isLive() == false) {
-                    heros.get(2).setLive(true);
-                    heros.get(2).setX(drawWidth / 2);
-                    heros.get(2).setY(drawHeight - 100);
+                if (hero2 == null) {
+                    hero2 = new Hero(drawWidth / 2, drawHeight - 100, "p2");
+                    heros.add(hero2);
+                    tanks.add(hero2);
+                    hero2.setTanks(tanks);
+                } else if(hero2.isLive() == false) {
+                    hero2.setLive(true);
+                    hero2.setX(drawWidth / 2);
+                    hero2.setY(drawHeight - 100);
                 }
                 break;
             case KeyEvent.VK_UP:
-                if (heros.containsKey(2)) heros.get(2).moveUp();
+                if (hero2 != null) hero2.moveUp();
                 break;
             case KeyEvent.VK_DOWN:
-                if (heros.containsKey(2)) heros.get(2).moveDown();
+                if (hero2 != null) hero2.moveDown();
                 break;
             case KeyEvent.VK_LEFT:
-                if (heros.containsKey(2)) heros.get(2).moveLeft();
+                if (hero2 != null) hero2.moveLeft();
                 break;
             case KeyEvent.VK_RIGHT:
-                if (heros.containsKey(2)) heros.get(2).moveRight();
+                if (hero2 != null) hero2.moveRight();
                 break;
             case KeyEvent.VK_J:
-                Hero hero = heros.get(1);
-                hero.fire();
+                hero1.fire();
                 break;
         }
 
@@ -512,9 +472,9 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
             }
 
             //判断坦克是否被击中
-            for (Hero hero : heros.values()) {
+            for (Hero hero : heros) {
                 for (int i = 0; i < enemies.size(); i++) {
-                    //判断地方坦克是否被击中
+                    //判断敌方坦克是否被击中
                     if (hero.getBullets().size() > 0) {
                         for (Bullet bullet : hero.getBullets()) {
                             hitTank(bullet, enemies.get(i));
@@ -529,9 +489,20 @@ public class AreaPanel extends JPanel implements KeyListener, Runnable {
                         }
                     }
                 }
+
                 for (int i = 0; i < enemies.size(); i++) {
-                    collideTank(hero, enemies.get(i));
+                    Enemy enemy = enemies.get(i);
+                    if(hero.collisionTank(enemy)) {
+                        Explosion enemyExplosion = new Explosion(enemy.getTankArea().get("minX"), enemy.getTankArea().get("minY"));
+                        Explosion heroExplosion = new Explosion(hero.getTankArea().get("minX"), hero.getTankArea().get("minY"));
+                        explosions.add(enemyExplosion);
+                        explosions.add(heroExplosion);
+                    }
                 }
+            }
+
+            for (int i = 0; i < enemies.size(); i++) {
+                enemies.get(i).collision();
             }
 
             repaint();

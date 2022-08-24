@@ -1,6 +1,8 @@
 package com.tank_game.model;
 
+import java.io.Serializable;
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.Vector;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Vector;
  * @version 1.0
  */
 @SuppressWarnings({"all"})
-public class TankModel{
+public class TankModel implements Serializable {
     protected int x;
     protected int y;
     protected int trackWidth = 10; //履带宽度
@@ -22,6 +24,7 @@ public class TankModel{
     protected int speed = 1;
     protected boolean live = true;
     protected Vector<TankModel> tanks = new Vector<>();
+    protected Vector<Bullet> bullets = new Vector<>();
 
 
     public TankModel(int x, int y) {
@@ -131,84 +134,132 @@ public class TankModel{
         this.live = live;
     }
 
+    public Vector<TankModel> getTanks() {
+        return tanks;
+    }
+
     public void setTanks(Vector<TankModel> tanks) {
         this.tanks = tanks;
     }
 
-    public boolean isTouch() {
-        if(tanks.size() > 0) {
-            Hashtable<String, Integer> mineArea = this.getTankArea();
-            for(TankModel tank : tanks) {
-                TankModel other = tank;
-                Hashtable<String, Integer> otherArea = other.getTankArea();
-                if (this.isLive() && other.isLive()) {
-                    switch (this.getDirect()) {
-                        case 0:
-                            if (((mineArea.get("minX") > otherArea.get("minX")
-                                    && mineArea.get("minX") < otherArea.get("maxX"))
-                                    || (mineArea.get("maxX") > otherArea.get("minX")
-                                    && mineArea.get("maxX") < otherArea.get("maxX")))
-                                    && mineArea.get("minY") > otherArea.get("minY")
-                                    && mineArea.get("minY") < otherArea.get("maxY")
-                            ) {
-                                //敌方坦克互相碰撞发生方向改变
-                                this.setDirect((int) (Math.random() * 4));
-                                if (other.getDirect() == 2) {
-                                    this.setDirect((int) (Math.random() * 4));
-                                }
-                                return true;
-                            }
-                            break;
-                        case 1:
-                            if (((mineArea.get("minY") > otherArea.get("minY")
-                                    && mineArea.get("minY") < otherArea.get("maxY"))
-                                    || (mineArea.get("maxY") > otherArea.get("minY")
-                                    && mineArea.get("maxY") < otherArea.get("maxY")))
-                                    && mineArea.get("maxX") > otherArea.get("minX")
-                                    && mineArea.get("maxX") < otherArea.get("maxX")
-                            ) {
-                                //敌方坦克互相碰撞发生方向改变
-                                this.setDirect((int) (Math.random() * 4));
-                                if (other.getDirect() == 3) {
-                                    this.setDirect((int) (Math.random() * 4));
-                                }
-                                return true;
-                            }
-                            break;
-                        case 2:
-                            if (((mineArea.get("minX") > otherArea.get("minX")
-                                    && mineArea.get("minX") < otherArea.get("maxX"))
-                                    || (mineArea.get("maxX") > otherArea.get("minX")
-                                    && mineArea.get("maxX") < otherArea.get("maxX")))
-                                    && mineArea.get("maxY") > otherArea.get("minY")
-                                    && mineArea.get("maxY") < otherArea.get("maxY")
-                            ) {
-                                //敌方坦克互相碰撞发生方向改变
-                                this.setDirect((int) (Math.random() * 4));
-                                if (other.getDirect() == 0) {
-                                    this.setDirect((int) (Math.random() * 4));
-                                }
-                                return true;
-                            }
-                            break;
-                        case 3:
-                            if (((mineArea.get("minY") > otherArea.get("minY")
-                                    && mineArea.get("minY") < otherArea.get("maxY"))
-                                    || (mineArea.get("maxY") > otherArea.get("minY")
-                                    && mineArea.get("maxY") < otherArea.get("maxY")))
-                                    && mineArea.get("minX") > otherArea.get("minX")
-                                    && mineArea.get("minX") < otherArea.get("maxX")
-                            ) {
-                                //同阵营坦克互相碰撞发生方向改变
-                                this.setDirect((int) (Math.random() * 4));
-                                if (other.getDirect() == 1) {
-                                    this.setDirect((int) (Math.random() * 4));
-                                }
-                                return true;
-                            }
-                            break;
+    public Vector<Bullet> getBullets() {
+        return bullets;
+    }
+
+    public void addBullet(Bullet bullet) {
+        bullets.add(bullet);
+    }
+
+    public void removeBullet(Bullet bullet) {
+        bullets.remove(bullet);
+    }
+
+    /**
+     * 清空所有的子弹
+     */
+    public void clearBullet() {
+        bullets.clear();
+    }
+
+    //判断是否发生碰撞
+    public boolean isTouch(TankModel tank) {
+        Hashtable<String, Integer> mineArea = this.getTankArea();
+        TankModel other = tank;
+        Hashtable<String, Integer> otherArea = other.getTankArea();
+        if (this.isLive() && other.isLive()) {
+            switch (this.getDirect()) {
+                case 0:
+                    if (((mineArea.get("minX") > otherArea.get("minX")
+                            && mineArea.get("minX") < otherArea.get("maxX"))
+                            || (mineArea.get("maxX") > otherArea.get("minX")
+                            && mineArea.get("maxX") < otherArea.get("maxX")))
+                            && mineArea.get("minY") > otherArea.get("minY")
+                            && mineArea.get("minY") < otherArea.get("maxY")
+                    ) {
+                        return true;
+                    }
+                    break;
+                case 1:
+                    if (((mineArea.get("minY") > otherArea.get("minY")
+                            && mineArea.get("minY") < otherArea.get("maxY"))
+                            || (mineArea.get("maxY") > otherArea.get("minY")
+                            && mineArea.get("maxY") < otherArea.get("maxY")))
+                            && mineArea.get("maxX") > otherArea.get("minX")
+                            && mineArea.get("maxX") < otherArea.get("maxX")
+                    ) {
+                        return true;
+                    }
+                    break;
+                case 2:
+                    if (((mineArea.get("minX") > otherArea.get("minX")
+                            && mineArea.get("minX") < otherArea.get("maxX"))
+                            || (mineArea.get("maxX") > otherArea.get("minX")
+                            && mineArea.get("maxX") < otherArea.get("maxX")))
+                            && mineArea.get("maxY") > otherArea.get("minY")
+                            && mineArea.get("maxY") < otherArea.get("maxY")
+                    ) {
+                        return true;
+                    }
+                    break;
+                case 3:
+                    if (((mineArea.get("minY") > otherArea.get("minY")
+                            && mineArea.get("minY") < otherArea.get("maxY"))
+                            || (mineArea.get("maxY") > otherArea.get("minY")
+                            && mineArea.get("maxY") < otherArea.get("maxY")))
+                            && mineArea.get("minX") > otherArea.get("minX")
+                            && mineArea.get("minX") < otherArea.get("maxX")
+                    ) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 遍历坦克集合
+     * 1. 如果碰撞到同阵营坦克就进行转向，返回false
+     * 2. 如果碰撞到不同阵营坦克就返回true
+     *
+     * @return boolean
+     */
+    public boolean collision() {
+        if (tanks.size() > 0) {
+            for (int i = 0; i < tanks.size(); i++) {
+                TankModel tank = tanks.get(i);
+                if (this.isTouch(tank) && this != tank) {
+                    if ((this instanceof Hero && tank instanceof Hero)
+                            || (this instanceof Enemy && tank instanceof Enemy)
+                    ) {
+                        this.setDirect((int) (Math.random() * 4));
+                    } else {
+                        this.setLive(false);
+                        tank.setLive(false);
+                        return true;
                     }
                 }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 验证是否是不同阵营的坦克发生碰撞
+     *
+     * @param tank
+     * @return
+     */
+    public boolean collisionTank(TankModel tank) {
+        if (this.isTouch(tank) && this != tank) {
+            if ((this instanceof Hero && tank instanceof Enemy)
+                    || (this instanceof Enemy && tank instanceof Hero)
+            ) {
+                this.setLive(false);
+                tank.setLive(false);
+                return true;
             }
         }
 
@@ -218,34 +269,43 @@ public class TankModel{
     //向下左右移动
     public void moveUp() {
         direct = 0;
-        if(y > 0 && !isTouch()) {
+        if (y > 0 && isLive()) {
             y -= speed;
+        } else if (this instanceof Enemy) {
+            direct = (int) (Math.random() * 3);
         }
     }
 
     public void moveDown() {
         direct = 2;
-        if(y < (750 - trackHeight) && !isTouch()) {
+        if (y < (750 - trackHeight) && isLive()) {
             y += speed;
+        } else if (this instanceof Enemy) {
+            direct = (int) (Math.random() * 3);
         }
     }
 
     public void moveLeft() {
         direct = 3;
-        if(x > 0 && !isTouch()) {
+        if (x > 0 && isLive()) {
             x -= speed;
+        } else if (this instanceof Enemy) {
+            direct = (int) (Math.random() * 3);
         }
     }
 
     public void moveRight() {
         direct = 1;
-        if(x < (1024 - trackHeight) && !isTouch()) {
+        if (x < (1024 - trackHeight) && isLive()) {
             x += speed;
+        } else if (this instanceof Enemy) {
+            direct = (int) (Math.random() * 3);
         }
     }
 
     /**
      * 获取子弹坐标
+     *
      * @return Hashtable
      */
     public Hashtable<Character, Integer> getBulletCoordinate() {
@@ -277,6 +337,7 @@ public class TankModel{
 
     /**
      * 获取坦克区域
+     *
      * @return Hashtable
      */
     public Hashtable<String, Integer> getTankArea() {
