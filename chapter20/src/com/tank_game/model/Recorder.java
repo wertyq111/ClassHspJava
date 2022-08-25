@@ -70,6 +70,7 @@ public class Recorder {
                     enemy.clearBullet();
                     enemies.add(enemy);
                 }
+                ois.close();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
