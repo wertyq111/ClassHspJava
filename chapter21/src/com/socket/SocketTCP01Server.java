@@ -2,13 +2,18 @@ package com.socket;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
  * @author zhouxufeng
  * @version 1.0
- * 服务端
+ * 使用字节流完成要求
+ *  1. 编写一个服务端和一个客户端
+ *  2. 服务端在9999端口监听
+ *  3. 客户端连接到服务端，发送"hello,server", 并接收服务端回发的"hello,client",再退出
+ *  4. 服务端接收到客户端发送的信息输出，并发送"hello,clinet",再退出
  */
 @SuppressWarnings({"all"})
 public class SocketTCP01Server {
@@ -29,8 +34,16 @@ public class SocketTCP01Server {
         while ((readLen = inputStream.read(buf)) != -1) {
             System.out.println(new String(buf, 0, readLen));
         }
+
+        // 输出流，输出内容到客户端
+        OutputStream outputStream = socket.getOutputStream();
+        outputStream.write("hello, client".getBytes());
+        // 设置结束标记
+        socket.shutdownOutput();
+
         // 4. 关闭流对象和socket
         inputStream.close();
+        outputStream.close();
         socket.close();
         serverSocket.close();
     }

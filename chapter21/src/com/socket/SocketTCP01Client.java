@@ -1,6 +1,7 @@
 package com.socket;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -22,8 +23,21 @@ public class SocketTCP01Client {
         OutputStream outputStream = socket.getOutputStream();
         // 3. 通过输出流,写入数据到服务端
         outputStream.write("hello, server".getBytes());
+        // 设置结束标记
+        socket.shutdownOutput();
+
+        //读取输入流
+        InputStream inputStream = socket.getInputStream();
+        byte[] buf = new byte[1024];
+        int readLen = 0;
+        while((readLen = inputStream.read(buf)) != -1) {
+            System.out.println(new String(buf, 0, readLen));
+        }
+
         // 4. 关闭流对象和socket
         outputStream.close();
+        inputStream.close();
         socket.close();
+        System.out.println("客户端退出");
     }
 }
