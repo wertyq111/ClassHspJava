@@ -4,13 +4,17 @@ import com.common.Message;
 
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.Vector;
+
+import com.common.MessageType;
+
 
 /**
  * @author zhouxufeng
  * @version 1.0
  */
 @SuppressWarnings({"all"})
-public class ClientConnectServerThread implements Runnable {
+public class ClientConnectServerThread extends Thread {
     //该线程需要持有Socket
     private Socket socket;
 
@@ -34,7 +38,15 @@ public class ClientConnectServerThread implements Runnable {
                 System.out.println("正在和服务端保持通信，读取数据...");
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 Message message = (Message) ois.readObject();//如果服务器没有发送Message对象，线程会阻塞在这里
-                System.out.println(message.getContent());
+
+                switch(message.getMesType()) {
+                    case MessageType.MESSAGE_RETURN_ONLINE_FRIEND:
+                        System.out.println("\n======获取在线用户列表======");
+                        //读取到输入流内容处理
+                        Vector<String> list = (Vector<String>) message.getContent();
+                        ManageClientConnectServerThread.onlineFriendList(list);
+                        break;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

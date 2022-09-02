@@ -41,6 +41,7 @@ public class Menu {
                                 key = Utility.readString(1);
                                 switch (key) {
                                     case "1":
+                                        userClientService.getOnlineFriendList();
                                         break;
                                     case "2":
                                         break;

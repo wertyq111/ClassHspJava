@@ -4,10 +4,15 @@ import com.common.Message;
 import com.common.MessageType;
 import com.common.User;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Vector;
 
 /**
  * @author zhouxufeng
@@ -37,10 +42,9 @@ public class UserClientService {
             if(ms.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCESSED)) {
                 //创建一个和服务器端保持通信的线程->创建一个类 ClientConnectServerThread
                 ClientConnectServerThread ccst = new ClientConnectServerThread(socket);
-                Thread thread = new Thread(ccst);
-                thread.start();
+                ccst.start();
                 //为了后续客户端的扩展，线程放到集合管理
-                ManageClientConnectServerThread.addClientConnectServerThread(userId, thread);
+                ManageClientConnectServerThread.addClientConnectServerThread(userId, ccst);
 
                 return user;
             } else {
@@ -52,5 +56,30 @@ public class UserClientService {
 
 
         return null;
+    }
+
+    /**
+     * 获取在线用户列表
+     * @return Vector
+     */
+    public void getOnlineFriendList() {
+        ClientConnectServerThread ccst = ManageClientConnectServerThread.getClientConnectServerThread(user.getUserId());
+        Socket socket = ccst.getSocket();
+
+        //socket连接，发送请求
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            Message message = new Message();
+            message.setMesType(MessageType.MESSAGE_GET_ONLINE_FRIEND);
+            message.setSender(user.getUserId());
+            LocalDateTime ldt = LocalDateTime.now();
+            //DateTimeFormatter 是一个格式化器，用来格式化日期时间
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            dtf.format(ldt);
+            message.setSendTime(dtf.format(ldt));
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
