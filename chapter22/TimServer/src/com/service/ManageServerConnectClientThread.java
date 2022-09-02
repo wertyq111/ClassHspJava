@@ -1,6 +1,7 @@
 package com.service;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * @author zhouxufeng
@@ -19,5 +20,18 @@ public class ManageServerConnectClientThread {
     //通过userId获取对应的线程
     public static ServerConnectClientThread getServerConnectClientThread(String userId) {
         return hm.get(userId);
+    }
+
+    /**
+     * 获取在线用户列表
+     * @return
+     */
+    public static Vector<String> getOnlineFriendList() {
+        Vector<String> list = new Vector<>();
+        for(String userId:hm.keySet()) {
+            list.add(userId);
+        }
+
+        return list;
     }
 }
