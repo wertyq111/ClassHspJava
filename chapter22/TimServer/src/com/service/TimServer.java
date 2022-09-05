@@ -87,6 +87,10 @@ public class TimServer {
             return false;
         }
 
+        if(ManageServerConnectClientThread.getServerConnectClientThread(userId) != null) {
+            return false;
+        }
+
         return true;
     }
 }

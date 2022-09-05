@@ -13,8 +13,16 @@ public class ManageServerConnectClientThread {
     //我们把多个线程放入一个HashMap集合， key就是userId，value就是线程
     private static HashMap<String, ServerConnectClientThread> hm = new HashMap<>();
 
+    public static HashMap<String, ServerConnectClientThread> getHm() {
+        return hm;
+    }
+
     public static void addServerConnectClientThread(String userId, ServerConnectClientThread serverConnectClientThread) {
         hm.put(userId, serverConnectClientThread);
+    }
+
+    public static void removeServerConnectClientThread(String userId) {
+        hm.remove(userId);
     }
 
     //通过userId获取对应的线程

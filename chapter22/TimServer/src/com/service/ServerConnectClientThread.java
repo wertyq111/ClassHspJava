@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -20,6 +21,8 @@ public class ServerConnectClientThread extends Thread {
     //该线程需要持有Socket
     private Socket socket;
     private String userId;
+    private boolean loop = true;
+    private ObjectOutputStream oos = null;
 
     public ServerConnectClientThread(Socket socket, String userId) {
         this.socket = socket;
@@ -37,7 +40,7 @@ public class ServerConnectClientThread extends Thread {
     @Override
     public void run() {
         //因为Thread需要在后台和服务器通信，因此我们while循环
-        while(true) {
+        while (loop) {
             try {
                 System.out.println("服务端和客户端 " + userId + " 保持通信，读取数据...");
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
@@ -57,8 +60,34 @@ public class ServerConnectClientThread extends Thread {
                         onlineFriendList.setSendTime(dtf.format(ldt));
                         onlineFriendList.setContent(list);
 
-                        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                        oos = new ObjectOutputStream(socket.getOutputStream());
                         oos.writeObject(onlineFriendList);
+                        break;
+                    case MessageType.MESSAGE_COMM_MES:
+                        System.out.println(message.getSendTime() + " 接收到来自 " + message.getSender() + " 发给 " + message.getRecevicer() + " 消息请求");
+                        Socket receiveSocket = ManageServerConnectClientThread.getServerConnectClientThread(message.getRecevicer()).getSocket();
+                        oos = new ObjectOutputStream(receiveSocket.getOutputStream());
+                        oos.writeObject(message);
+                        break;
+                    case MessageType.MESSAGE_ALL_MES:
+                        System.out.println(message.getSendTime() + " 接收到来自 " + message.getSender() + " 群发消息请求");
+                        HashMap<String, ServerConnectClientThread> hm = ManageServerConnectClientThread.getHm();
+                        for(String onlineUserId : hm.keySet()) {
+                            if(!onlineUserId.equals(userId)) {
+                                Socket socket = ManageServerConnectClientThread.getServerConnectClientThread(onlineUserId).getSocket();
+                                oos = new ObjectOutputStream(socket.getOutputStream());
+                                oos.writeObject(message);
+                            }
+                        }
+                        break;
+                    case MessageType.MESSAGE_CLIENT_LOGOUT:
+                        System.out.println(message.getSendTime() + " 接收到来自 " + message.getSender() + " 接收到退出请求");
+                        //关闭socket
+                        socket.close();
+                        //将这个客户端对应的线程从集合中移除
+                        ManageServerConnectClientThread.removeServerConnectClientThread(userId);
+                        //退出while循环
+                        loop = false;
                         break;
                 }
             } catch (Exception e) {
