@@ -1,6 +1,7 @@
 package com.view;
 
 import com.common.User;
+import com.service.MessageClientService;
 import com.service.UserClientService;
 import com.tools.Utility;
 
@@ -13,7 +14,8 @@ import com.tools.Utility;
 public class Menu {
     private boolean loop = true; //控制是否显示菜单
     private String key = ""; //接收用户的键盘输入
-    private UserClientService userClientService = new UserClientService();//对象时用于登录服务/注册用户
+    private UserClientService userClientService = new UserClientService();//对象是用于登录服务/注册用户
+    private MessageClientService messageClientService = new MessageClientService();//对象是用户消息互通
 
     public void mainMenu() {
         try {
@@ -44,12 +46,22 @@ public class Menu {
                                         userClientService.getOnlineFriendList();
                                         break;
                                     case "2":
+                                        System.out.println("请输入发送内容: ");
+                                        String allContent = Utility.readString(100);
+                                        messageClientService.sendMessageToAll(allContent, user.getUserId());
                                         break;
                                     case "3":
+                                        System.out.println("请输入发送对象: ");
+                                        String recevicer = Utility.readString(50);
+                                        System.out.println("请输入发送内容: ");
+                                        String content = Utility.readString(100);
+                                        messageClientService.sendMessageToOne(content, user.getUserId(), recevicer);
                                         break;
                                     case "4":
                                         break;
                                     case "5":
+                                        userClientService.logout();
+                                        loop=false;
                                         break;
                                 }
                             }

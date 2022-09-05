@@ -46,6 +46,12 @@ public class ClientConnectServerThread extends Thread {
                         Vector<String> list = (Vector<String>) message.getContent();
                         ManageClientConnectServerThread.onlineFriendList(list);
                         break;
+                    case MessageType.MESSAGE_COMM_MES:
+                        System.out.println("\n" + message.getSendTime() + " " + message.getSender() + "对你说: " + message.getContent());
+                        break;
+                    case MessageType.MESSAGE_ALL_MES:
+                        System.out.println("\n" + message.getSendTime() + " " + message.getSender() + "对大家说: " + message.getContent());
+                        break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -63,21 +63,33 @@ public class UserClientService {
      * @return Vector
      */
     public void getOnlineFriendList() {
-        ClientConnectServerThread ccst = ManageClientConnectServerThread.getClientConnectServerThread(user.getUserId());
-        Socket socket = ccst.getSocket();
-
+        Socket socket = ManageClientConnectServerThread.getSocket(user.getUserId());
         //socket连接，发送请求
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(this.socket.getOutputStream());
             Message message = new Message();
             message.setMesType(MessageType.MESSAGE_GET_ONLINE_FRIEND);
             message.setSender(user.getUserId());
-            LocalDateTime ldt = LocalDateTime.now();
-            //DateTimeFormatter 是一个格式化器，用来格式化日期时间
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            dtf.format(ldt);
-            message.setSendTime(dtf.format(ldt));
+            message.setSendTime(ManageClientConnectServerThread.getTime());
             oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void logout() {
+        Socket socket = ManageClientConnectServerThread.getSocket(user.getUserId());
+
+        //socket链接，发送退出请求
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            Message message = new Message();
+            message.setMesType(MessageType.MESSAGE_CLIENT_LOGOUT);
+            message.setSender(user.getUserId());
+            message.setSendTime(ManageClientConnectServerThread.getTime());
+            oos.writeObject(message);
+            System.out.println(user.getUserId() + " 退出系统 ");
+            System.exit(0);//结束进程
         } catch (IOException e) {
             e.printStackTrace();
         }

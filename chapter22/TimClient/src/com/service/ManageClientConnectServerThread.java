@@ -1,5 +1,8 @@
 package com.service;
 
+import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -20,6 +23,19 @@ public class ManageClientConnectServerThread {
     //通过userId获取对应的线程
     public static ClientConnectServerThread getClientConnectServerThread(String userId) {
         return hm.get(userId);
+    }
+
+    public static Socket getSocket(String userId) {
+        ClientConnectServerThread ccst = getClientConnectServerThread(userId);
+        return ccst.getSocket();
+    }
+
+    public static String getTime() {
+        LocalDateTime ldt = LocalDateTime.now();
+        //DateTimeFormatter 是一个格式化器，用来格式化日期时间
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        dtf.format(ldt);
+        return dtf.format(ldt);
     }
 
     /**
