@@ -64,6 +64,7 @@ public class ServerConnectClientThread extends Thread {
                         oos.writeObject(onlineFriendList);
                         break;
                     case MessageType.MESSAGE_COMM_MES:
+                    case MessageType.MESSAGE_FILE_MES:
                         System.out.println(message.getSendTime() + " 接收到来自 " + message.getSender() + " 发给 " + message.getRecevicer() + " 消息请求");
                         Socket receiveSocket = ManageServerConnectClientThread.getServerConnectClientThread(message.getRecevicer()).getSocket();
                         oos = new ObjectOutputStream(receiveSocket.getOutputStream());
