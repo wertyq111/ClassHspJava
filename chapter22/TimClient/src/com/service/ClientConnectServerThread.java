@@ -49,6 +49,11 @@ public class ClientConnectServerThread extends Thread {
                     case MessageType.MESSAGE_COMM_MES:
                         System.out.println("\n" + message.getSendTime() + " " + message.getSender() + "对你说: " + message.getContent());
                         break;
+                    case MessageType.MESSAGE_FILE_MES:
+                        FileClientService fileClientService = new FileClientService();
+                        fileClientService.receviceFile(message.getRecevicer(), (String)message.getContent(), message.getFileBytes());
+                        System.out.println("\n" + message.getSendTime() + " " + message.getSender() + "给你发送了文件 " + message.getContent());
+                        break;
                     case MessageType.MESSAGE_ALL_MES:
                         System.out.println("\n" + message.getSendTime() + " " + message.getSender() + "对大家说: " + message.getContent());
                         break;
