@@ -6,8 +6,7 @@ import com.common.MessageType;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -53,11 +52,7 @@ public class ServerConnectClientThread extends Thread {
                         Message onlineFriendList = new Message();
                         onlineFriendList.setMesType(MessageType.MESSAGE_RETURN_ONLINE_FRIEND);
                         onlineFriendList.setRecevicer(userId);
-                        LocalDateTime ldt = LocalDateTime.now();
-                        //DateTimeFormatter 是一个格式化器，用来格式化日期时间
-                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                        dtf.format(ldt);
-                        onlineFriendList.setSendTime(dtf.format(ldt));
+                        onlineFriendList.setSendTime(ManageServerConnectClientThread.getTime());
                         onlineFriendList.setContent(list);
 
                         oos = new ObjectOutputStream(socket.getOutputStream());
@@ -66,15 +61,24 @@ public class ServerConnectClientThread extends Thread {
                     case MessageType.MESSAGE_COMM_MES:
                     case MessageType.MESSAGE_FILE_MES:
                         System.out.println(message.getSendTime() + " 接收到来自 " + message.getSender() + " 发给 " + message.getRecevicer() + " 消息请求");
-                        Socket receiveSocket = ManageServerConnectClientThread.getServerConnectClientThread(message.getRecevicer()).getSocket();
-                        oos = new ObjectOutputStream(receiveSocket.getOutputStream());
-                        oos.writeObject(message);
+                        if (ManageServerConnectClientThread.getServerConnectClientThread(message.getRecevicer()) != null) {
+                            Socket receiveSocket = ManageServerConnectClientThread.getServerConnectClientThread(message.getRecevicer()).getSocket();
+                            oos = new ObjectOutputStream(receiveSocket.getOutputStream());
+                            oos.writeObject(message);
+                        } else {
+                            ArrayList<Message> messages = new ArrayList<>();
+                            if(ManageServerConnectClientThread.getOfflineMessages(message.getRecevicer()) != null) {
+                                messages = ManageServerConnectClientThread.getOfflineMessages(message.getRecevicer());
+                            }
+                            messages.add(message);
+                            ManageServerConnectClientThread.addOfflineMessages(message.getRecevicer(), messages);
+                        }
                         break;
                     case MessageType.MESSAGE_ALL_MES:
                         System.out.println(message.getSendTime() + " 接收到来自 " + message.getSender() + " 群发消息请求");
                         HashMap<String, ServerConnectClientThread> hm = ManageServerConnectClientThread.getHm();
-                        for(String onlineUserId : hm.keySet()) {
-                            if(!onlineUserId.equals(userId)) {
+                        for (String onlineUserId : hm.keySet()) {
+                            if (!onlineUserId.equals(userId)) {
                                 Socket socket = ManageServerConnectClientThread.getServerConnectClientThread(onlineUserId).getSocket();
                                 oos = new ObjectOutputStream(socket.getOutputStream());
                                 oos.writeObject(message);

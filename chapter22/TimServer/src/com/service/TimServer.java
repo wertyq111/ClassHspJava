@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -35,6 +36,10 @@ public class TimServer {
             System.out.println("服务端在9999端口监听...");
             serverSocket = new ServerSocket(9999);
 
+            //开启新闻推送线程
+            Thread thread = new Thread(new SendNewsToClientService());
+            thread.start();
+
             while (true) { //当和某个客户端连接后继续监听,因此用while
                 Socket socket = serverSocket.accept();
                 //得到socket关联的对象输入流
@@ -49,11 +54,16 @@ public class TimServer {
                 if (checkUser(user.getUserId(), user.getPasswd())) {
                     message.setMesType(MessageType.MESSAGE_LOGIN_SUCCESSED);
                     oos.writeObject(message);
+
                     //创建一个线程，和客户端保持通信，该线程需要持有socket对象
                     ServerConnectClientThread scct = new ServerConnectClientThread(socket, user.getUserId());
                     scct.start();
                     //把该线程对象放入到一个集合中进行管理
                     ManageServerConnectClientThread.addServerConnectClientThread(user.getUserId(), scct);
+
+                    SendOfflineMessage sendOfflineMessage = new SendOfflineMessage();
+                    sendOfflineMessage.setUserId(user.getUserId());
+                    sendOfflineMessage.start();
                 } else {
                     System.out.println("用户id = " + user.getUserId() + ", 密码 = " + user.getPasswd() + "登录失败");
                     message.setMesType(MessageType.MESSAGE_LOGIN_FAILED);
