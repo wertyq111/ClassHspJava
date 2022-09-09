@@ -132,7 +132,6 @@ public class FileClientService {
         FileOutputStream fileOutputStream = null;
         //写入文件目录
         try {
-            System.out.println(publcFileDir + "/" + userId);
             File fileDir = new File(publcFileDir + "/" + userId);
             if(!fileDir.isDirectory()) {
                 fileDir.mkdir();
