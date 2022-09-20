@@ -7,6 +7,7 @@ package com;
 @SuppressWarnings({"all"})
 public class Cat {
     private String name;
+    public int age = 1;
 
     public Cat() {
         this.name = "西米";
@@ -25,6 +26,7 @@ public class Cat {
     }
 
     public void hi() {
-        System.out.println("小猫 " + name + " 正在对你喵喵叫");
+        this.name = "111";
+        //System.out.println("小猫 " + name + " 正在对你喵喵叫");
     }
 }
