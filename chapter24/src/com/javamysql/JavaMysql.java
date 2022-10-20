@@ -17,11 +17,11 @@ public class JavaMysql {
         Connection connection = DriverManager.getConnection("jdbc:mysql://1.117.211.237:3306/?serverTimezone=GMT%2B8", "wertyq111", "zhouXufeng123_");
 
         //编写 sql 语句
-        String sql = "select * from oa_sale.commodity where 1";
+        String sql = "update oa_sale.commodity where 1";
 
         //得到statement
         Statement statement = connection.createStatement();
-        statement.execute(sql);
+        statement.executeUpdate(sql);
 
         statement.close();
         connection.close();
