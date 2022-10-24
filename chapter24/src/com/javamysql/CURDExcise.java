@@ -19,7 +19,7 @@ public class CURDExcise {
     public static void create() throws Exception {
         //加载类, 得到mysql 连接
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://1.117.211.237:3306/?serverTimezone=GMT%2B8", "wertyq111", "zhouXufeng123_");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://xxx.xxx.xxx.xxx:3306/?serverTimezone=GMT%2B8", "xxx", "xxx");
 
         //编写 sql 语句 向表 emp 中插入 2个员工信息
         String sql = "Insert into java.emp(name, sex, birthday, entry_date, job, salary, resume) values " +
@@ -40,7 +40,7 @@ public class CURDExcise {
     public void update() throws Exception {
         //加载类, 得到mysql 连接
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://1.117.211.237:3306/?serverTimezone=GMT%2B8", "wertyq111", "zhouXufeng123_");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://xxx.xxx.xxx.xxx:3306/?serverTimezone=GMT%2B8", "xxx", "xxx");
 
         //编写 sql 语句
         String sql = "update java.emp set salary = 64278.99 where name='tom'";
@@ -59,7 +59,7 @@ public class CURDExcise {
     public void delete() throws Exception {
         //加载类, 得到mysql 连接
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://1.117.211.237:3306/?serverTimezone=GMT%2B8", "wertyq111", "zhouXufeng123_");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://xxx.xxx.xxx.xxx:3306/?serverTimezone=GMT%2B8", "xxx", "xxx");
 
         //编写 sql 语句
         String sql = "delete from java.emp where name='tom'";
@@ -78,7 +78,7 @@ public class CURDExcise {
     public void read() throws Exception {
         //加载类, 得到mysql 连接
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://1.117.211.237:3306/?serverTimezone=GMT%2B8", "wertyq111", "zhouXufeng123_");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://xxx.xxx.xxx.xxx:3306/?serverTimezone=GMT%2B8", "xxx", "xxx");
 
         //编写 sql 语句 向表 emp 中插入 2个员工信息
         String sql = "select * from java.emp where 1";
