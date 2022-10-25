@@ -28,11 +28,11 @@ public class JdbcCon {
     @Test
     public void connect01() throws SQLException {
         Driver driver = new Driver();
-        String url = "jdbc:mysql://1.117.211.237:3306/java";
+        String url = "jdbc:mysql://xxx.xxx.xxx.xxx:xxxx/xx";
         // 将用户名和密码放入到 properties 对象
         Properties properties = new Properties();
-        properties.setProperty("user", "wertyq111");
-        properties.setProperty("password", "zhouXufeng123_");
+        properties.setProperty("user", "xxxx");
+        properties.setProperty("password", "*******");
         Connection connect = driver.connect(url, properties);
         System.out.println(connect);
     }
@@ -50,11 +50,11 @@ public class JdbcCon {
         Class<?> clazz = Class.forName("com.mysql.cj.jdbc.Driver");
         Driver driver = (Driver)clazz.newInstance();
 
-        String url = "jdbc:mysql://1.117.211.237:3306/java";
+        String url = "jdbc:mysql://xxx.xxx.xxx.xxx:xxxx/xx";
         // 将用户名和密码放入到 properties 对象
         Properties properties = new Properties();
-        properties.setProperty("user", "wertyq111");
-        properties.setProperty("password", "zhouXufeng123_");
+        properties.setProperty("user", "xxxx");
+        properties.setProperty("password", "*******");
         Connection connect = driver.connect(url, properties);
         System.out.println(connect);
     }
@@ -72,9 +72,9 @@ public class JdbcCon {
         Class<?> clazz = Class.forName("com.mysql.cj.jdbc.Driver");
         Driver driver = (Driver)clazz.newInstance();
 
-        String url = "jdbc:mysql://1.117.211.237:3306/java";
-        String user = "wertyq111";
-        String password = "zhouXufeng123_";
+        String url = "jdbc:mysql://xxx.xxx.xxx.xxx:xxxx/xx";
+        String user = "xxxx";
+        String password = "*******";
 
         DriverManager.registerDriver(driver); //注册 driver 驱动
 
@@ -108,9 +108,9 @@ public class JdbcCon {
         Class<?> clazz = Class.forName("com.mysql.cj.jdbc.Driver");
         Driver driver = (Driver)clazz.newInstance();
 
-        String url = "jdbc:mysql://1.117.211.237:3306/java";
-        String user = "wertyq111";
-        String password = "zhouXufeng123_";
+        String url = "jdbc:mysql://xxx.xxx.xxx.xxx:xxxx/xx";
+        String user = "xxxx";
+        String password = "*******";
 
         Connection connect = DriverManager.getConnection(url, user, password);
         System.out.println(connect);

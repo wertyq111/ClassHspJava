@@ -24,11 +24,11 @@ public class Jdbc01 {
         // (3) 3306 表示 mysql 监听的端口
         // (4) java 连接到 mtsql dbms 的哪个数据库
         // (5) mysql 的链接本质就是socket 连接
-        String url = "jdbc:mysql://1.117.211.237:3306/java";
+        String url = "jdbc:mysql://xxx.xxx.xxx.xxx:xxxx/xx";
         // 将用户名和密码放入到 properties 对象
         Properties properties = new Properties();
-        properties.setProperty("user", "wertyq111");
-        properties.setProperty("password", "zhouXufeng123_");
+        properties.setProperty("user", "xxxxxx");
+        properties.setProperty("password", "*******");
         Connection connect = driver.connect(url, properties);
 
         // 3. 执行 sql
