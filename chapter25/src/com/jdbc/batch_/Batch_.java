@@ -13,12 +13,14 @@ import java.sql.SQLException;
 @SuppressWarnings({"all"})
 public class Batch_ {
     public static void main(String[] args) {
+        Connection batchConnection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Connection batchConnection = JDBCUtils.getBatchConnection();
+            batchConnection = JDBCUtils.getBatchConnection();
 
             String sql = "delete from actor where name = ?";
 
-            PreparedStatement preparedStatement = batchConnection.prepareStatement(sql);
+            preparedStatement = batchConnection.prepareStatement(sql);
 
             for(int i = 0; i <= 5000; i++) {
                 preparedStatement.setString(1, "jack" + i);
@@ -34,6 +36,7 @@ public class Batch_ {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            JDBCUtils.close(null, preparedStatement, batchConnection);
         }
     }
 }
