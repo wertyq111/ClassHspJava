@@ -69,4 +69,20 @@ public class DiningTableService {
 
         return update > 0;
     }
+
+    /**
+     * 更新餐桌状态
+     * @param id
+     * @param state
+     * @return boolean
+     */
+    public boolean updateDiningTableState(int id, String state) {
+        int update = diningTableDAO.update(
+                "update dining_table set state = ? where id = ?",
+                state,
+                id
+        );
+
+        return update > 0;
+    }
 }
