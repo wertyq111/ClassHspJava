@@ -16,11 +16,12 @@ public class Bill {
     private Integer num;
     private Double money;
     private Date billDate;
+    private String state;
 
     public Bill() {
     }
 
-    public Bill(Integer id, String billId, Integer menuId, Integer diningTableId, Integer num, Double money, Date billDate) {
+    public Bill(Integer id, String billId, Integer menuId, Integer diningTableId, Integer num, Double money, Date billDate, String state) {
         this.id = id;
         this.billId = billId;
         this.menuId = menuId;
@@ -28,6 +29,7 @@ public class Bill {
         this.num = num;
         this.money = money;
         this.billDate = billDate;
+        this.state = state;
     }
 
     public Integer getId() {
@@ -84,6 +86,14 @@ public class Bill {
 
     public void setBillDate(Date billDate) {
         this.billDate = billDate;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     @Override

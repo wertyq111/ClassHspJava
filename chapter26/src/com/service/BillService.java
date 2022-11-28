@@ -72,4 +72,42 @@ public class BillService {
 
         return update > 0;
     }
+
+    /**
+     * 根据餐桌号查询未结清账单数量
+     * @param diningTableId
+     * @return
+     */
+    public boolean hasPayBillByDiningTableId(int diningTableId) {
+        Object o = billDAO.queryScalar(
+                "select count(id) from bill where state != '已结账' and diningTableId = ?",
+                diningTableId
+        );
+
+        Integer hasPayBillNumbers = Integer.parseInt(o.toString());
+
+        return hasPayBillNumbers > 0;
+    }
+
+    /**
+     * 结账
+     * @param diningTableId
+     * @return
+     */
+    public boolean payBill(int diningTableId) {
+
+        //修改订单状态
+        int update = billDAO.update(
+                "update bill set state = '已结账' where diningTableId = ? and state != '已结账'",
+                diningTableId
+        );
+
+        if(update > 0) {
+            return false;
+        }
+
+        //更新餐桌状态
+        boolean payEnd = diningTableService.diningTableStateToFree(diningTableId);
+        return payEnd;
+    }
 }

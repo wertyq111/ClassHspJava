@@ -1,5 +1,6 @@
 package com.view;
 
+import com.domain.Bill;
 import com.domain.DiningTable;
 import com.domain.Employee;
 import com.domain.Menu;
@@ -74,8 +75,10 @@ public class MHLView {
                                     orderMenu();
                                     break;
                                 case "5":
+                                    billView();
                                     break;
                                 case "6":
+                                    payBill();
                                     break;
                                 case "9":
                                     loop = false;
@@ -222,5 +225,76 @@ public class MHLView {
         } else {
             System.out.println("==========点餐失败==========");
         }
+    }
+
+    /**
+     * 账单列表
+     */
+    public void billView() {
+        List<Bill> list = billService.getBills();
+        System.out.println("编号\t\t菜品名\t\t菜品量\t\t金额\t\t桌号\t\t日期\t\t\t\t\t\t状态");
+        for(Bill bill : list) {
+            //根据菜品 id 找到菜品名
+            Menu menu = menuService.getMenuById(bill.getMenuId());
+            System.out.println(bill.getId() + "\t\t" + menu.getName() + "\t\t"
+                    + bill.getNum() + "\t\t\t" + bill.getMoney() + "\t"
+                    + bill.getDiningTableId() + "\t\t" + bill.getBillDate() + "\t" + bill.getState());
+        }
+        System.out.println("===========显示完毕==========");
+    }
+
+    public void payBill() {
+        System.out.println("==========结账服务==========");
+        boolean loop = true;
+        int diningTableId = 0;
+        while(loop) {
+            if(diningTableId <= 0) {
+                System.out.print("请输入要结账的餐桌号(-1退出): ");
+                diningTableId = ScannerUtility.readInt();
+                if(diningTableId == -1) {
+                    return;
+                }
+                DiningTable diningTable = diningTableService.getDiningTableById(diningTableId);
+                if(diningTable == null) {
+                    System.out.print("不存在对应的餐桌号.请重新输入: ");
+                    continue;
+                }
+
+                if(!billService.hasPayBillByDiningTableId(diningTableId)) {
+                    System.out.print("该餐桌不存在未结账的账单.请重新输入或退出: ");
+                    continue;
+                }
+            }
+
+            System.out.println("==========" + diningTableId + "号桌账单明细==========");
+            //获取账单明细显示
+            System.out.println("菜品名\t\t价格\t\t数量");
+            List<Bill> bills = billService.getBills();
+            double total = 0;
+            for (Bill bill: bills) {
+                //获取菜单信息
+                Menu menu = menuService.getMenuById(bill.getMenuId());
+                System.out.println(menu.getName() + "\t\t" + menu.getPrice() + "\t" + bill.getNum());
+                total += bill.getMoney();
+            }
+            System.out.println("总价\t\t\t" + total);
+
+            System.out.print("确认结账(Y/N): ");
+            char key = ScannerUtility.readConfirmSelection();
+            if(key == 'Y') {
+                if(billService.payBill(diningTableId)) {
+                    System.out.println("==========结账成功==========");
+                } else {
+                    System.out.println("==========结账失败==========");
+                    continue;
+                }
+            } else {
+                System.out.println("==========取消结账==========");
+            }
+
+            loop = false;
+
+        }
+
     }
 }

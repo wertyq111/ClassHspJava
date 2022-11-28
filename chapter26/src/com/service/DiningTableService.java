@@ -85,4 +85,18 @@ public class DiningTableService {
 
         return update > 0;
     }
+
+    /**
+     * 结账
+     * @param id
+     * @return boolean
+     */
+    public boolean diningTableStateToFree(int id) {
+        int update = diningTableDAO.update(
+                "update dining_table set state = '空', orderName = '', orderTel = '' where id = ?",
+                id
+        );
+
+        return update > 0;
+    }
 }
