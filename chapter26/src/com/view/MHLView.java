@@ -1,9 +1,6 @@
 package com.view;
 
-import com.domain.Bill;
-import com.domain.DiningTable;
-import com.domain.Employee;
-import com.domain.Menu;
+import com.domain.*;
 import com.service.BillService;
 import com.service.DiningTableService;
 import com.service.EmployeeService;
@@ -75,7 +72,8 @@ public class MHLView {
                                     orderMenu();
                                     break;
                                 case "5":
-                                    billView();
+                                    //billView();
+                                    billDetailView();
                                     break;
                                 case "6":
                                     payBill();
@@ -243,6 +241,24 @@ public class MHLView {
         System.out.println("===========显示完毕==========");
     }
 
+    /**
+     * 账单详情
+     */
+    public void billDetailView() {
+        List<MultiForBill> list = billService.getBillDetails();
+        System.out.println("编号\t\t菜品名\t\t菜品量\t\t金额\t\t桌号\t\t日期\t\t\t\t\t\t状态");
+        for(MultiForBill bill : list) {
+            //根据菜品 id 找到菜品名
+            System.out.println(bill.getId() + "\t\t" + bill.getMenuName() + "\t\t"
+                    + bill.getNum() + "\t\t\t" + bill.getMoney() + "\t"
+                    + bill.getDiningTableId() + "\t\t" + bill.getBillDate() + "\t" + bill.getState());
+        }
+        System.out.println("===========显示完毕==========");
+    }
+
+    /**
+     * 结账
+     */
     public void payBill() {
         System.out.println("==========结账服务==========");
         boolean loop = true;

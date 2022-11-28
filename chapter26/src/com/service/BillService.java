@@ -1,8 +1,10 @@
 package com.service;
 
 import com.dao.BillDAO;
+import com.dao.MultiForBillDAO;
 import com.domain.Bill;
 import com.domain.Menu;
+import com.domain.MultiForBill;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +17,7 @@ import java.util.UUID;
 public class BillService {
     //定义一个 billDAO 属性
     private BillDAO billDAO = new BillDAO();
+    private MultiForBillDAO multiForBillDAO = new MultiForBillDAO();
     private MenuService menuService = new MenuService();
     private DiningTableService diningTableService = new DiningTableService();
 
@@ -35,8 +38,21 @@ public class BillService {
      */
     public List<Bill> getBills() {
         List<Bill> list = billDAO.queryMulti(
-                "select * from bill where 1",
+                "select * from bill where state != '已结账'",
                 Bill.class
+        );
+
+        return list;
+    }
+
+    /**
+     * 返回账单列表 - 详细信息
+     * @return List<MultiForBill>
+     */
+    public List<MultiForBill> getBillDetails() {
+        List<MultiForBill> list = multiForBillDAO.queryMulti(
+                "select bill.*, name menuName from bill, menu where bill.menuId = menu.id",
+                MultiForBill.class
         );
 
         return list;
