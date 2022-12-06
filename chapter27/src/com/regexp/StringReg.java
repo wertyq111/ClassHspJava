@@ -11,7 +11,7 @@ public class StringReg {
         String content = "2000年5月，JDK1.3、JDK1.4和J2SE1.3相继发布，几周后其获得了Apple公司Mac OS X的工业标准的支持。" +
                 "2001年9月24日，J2EE1.3发布。2002年2月26日，J2SE1.4发布。自此Java的计算能力有了大幅提升，" +
                 "与J2SE1.3相比，其多了近62%的类和接口。" +
-                "在这些新特性当中，还提供了广泛的XML支持、安全套接字（Socket）支持（通过SSL与TLS协议）、" +
+                "在这些新特性当中，还提供了广泛的XML支a持、安全套接字（Socket）支持（通过SSL与TLS协议）、" +
                 "全新的I/OAPI、正则表达式、日志与断言。";
 
         String regStr = "(JDK)1\\.(?:3|4)";
