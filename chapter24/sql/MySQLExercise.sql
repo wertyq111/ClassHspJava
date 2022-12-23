@@ -37,7 +37,7 @@ CREATE TABLE purchase(
 -- 4. 客户的性别[男|女]
 -- 5. 单价 unit_price 在 1.0 ~ 9999.99 之间 check
 INSERT INTO customer(name, address, email, sex, car_id)
-VALUES ('zxf', 'Hang Zhou', 'wertyq111@netsun.com', '男', '123456789098765432');
+VALUES ('test', 'Unknown', 'tests@test.com', '男', '123456789098765432');
 
 
 -- 创建一张订单表 order(id, 商品名, 订购人, 数量)
